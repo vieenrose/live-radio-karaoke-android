@@ -72,13 +72,25 @@ libraries. Models are downloaded on first run (see below).
 
 ## F-Droid
 
-`fdroid/metadata-template.yml` is the build recipe to drop into `fdroiddata`:
-- builds `llama.cpp` + `sherpa-onnx` + `onnxruntime` from source as srclibs (NDK/CMake),
-- uses the `fdroid` product flavor,
-- declares `AntiFeatures: [NonFreeNet]` (runtime Gemma download) with rationale.
+`fdroid/metadata-template.yml` is the build recipe to drop into `fdroiddata`. The whole native
+stack builds **from source** (no prebuilt blobs) — **verified locally (2026-06)**:
 
-onnxruntime-from-source is the heavy part of an F-Droid build and is the main open task before
-submission; the `dev` flavor uses the prebuilt sherpa-onnx `.so` for local/Play builds.
+| Library | Source | Output | How |
+|---|---|---|---|
+| onnxruntime v1.24.3 | microsoft/onnxruntime | `libonnxruntime.so` (19 MB) | `scripts/build-onnxruntime-android.sh` |
+| sherpa-onnx v1.13.3 | k2-fsa/sherpa-onnx | `libsherpa-onnx-jni.so` (3.4 MB) | `scripts/build-sherpa-android.sh` (links the above) |
+| llama.cpp | ggml-org/llama.cpp | `libllama-android.so` (4.9 MB) | gradle `externalNativeBuild`, `-PwithNative` |
+
+A from-source-built APK (all three) compiles and packages cleanly; the rebuilt
+`libsherpa-onnx-jni.so` links our source-built `libonnxruntime.so` and exports the exact JNI
+symbols our vendored Kotlin API binds to.
+
+**Remaining blocker for f-droid.org (not the compile — the *offline* policy):** F-Droid build
+servers have no network after srclib checkout, but onnxruntime's CMake pulls ~20 dependencies via
+FetchContent at configure time (onnx, protobuf, abseil, flatbuffers, re2, eigen…). Each must be
+declared as its own srclib (or vendored) and onnxruntime pointed at the local copies. That's the
+mechanical-but-sizeable open task — and the real reason onnxruntime apps are rare on f-droid.org.
+Until it's done, ship via the self-hosted repo (Route B), which permits the same source-built `.so`.
 
 ## Known fixup areas (first compile in Android Studio)
 

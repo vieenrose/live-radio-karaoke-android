@@ -1,5 +1,6 @@
 # Template for fdroiddata/metadata/io.github.vieenrose.liveradiokaraoke.yml
-# Builds the on-device AI from source; declares the runtime Gemma download as NonFreeNet.
+# Builds the entire on-device AI stack FROM SOURCE (no prebuilt blobs); declares the runtime
+# Gemma download as NonFreeNet.
 Categories:
   - Multimedia
 License: Apache-2.0
@@ -10,34 +11,60 @@ IssueTracker: https://github.com/vieenrose/live-radio-karaoke-android/issues
 AntiFeatures:
   NonFreeNet:
     en-US: >-
-      The on-device summary/translation model (Google Gemma 3 1B) is distributed under the
-      non-free Gemma Terms of Use and is downloaded from Hugging Face at runtime after an
-      in-app consent screen. A fully-open alternative model (LFM2.5 / Qwen2.5, Apache-2.0)
-      can be selected instead. ASR models are downloaded from the k2-fsa release server.
+      The on-device summary/translation model (Google Gemma 3 1B) is under the non-free Gemma
+      Terms of Use and is downloaded from Hugging Face at runtime after in-app consent. A
+      fully-open model (LFM2.5 / Qwen2.5, Apache-2.0) can be selected instead. ASR models are
+      downloaded from the k2-fsa release server.
 
 RepoType: git
 Repo: https://github.com/vieenrose/live-radio-karaoke-android.git
 
-# llama.cpp and sherpa-onnx (+ onnxruntime) are pulled as srclibs and compiled from source via
-# the NDK/CMake build so no prebuilt binaries enter the APK. The `fdroid` product flavor selects
-# the source-built native libraries.
+# The native stack is built from source (VERIFIED locally, 2026-06):
+#   1. onnxruntime v1.24.3  -> libonnxruntime.so     (scripts/build-onnxruntime-android.sh)
+#   2. sherpa-onnx  v1.13.3 -> libsherpa-onnx-jni.so (scripts/build-sherpa-android.sh, links #1)
+#   3. llama.cpp            -> libllama-android.so   (gradle externalNativeBuild, -PwithNative)
+# Steps 1-2 produce the .so files copied into app/src/main/jniLibs/arm64-v8a before the gradle
+# build; step 3 is compiled by gradle. The `fdroid` product flavor selects this path.
 Builds:
-  - versionName: 1.0.0
-    versionCode: 1
-    commit: v1.0.0
+  - versionName: 1.0.1
+    versionCode: 2
+    commit: v1.0.1
     subdir: app
     gradle:
       - fdroid
-    srclibs:
-      - llama.cpp@master
-      - sherpa-onnx@v1.10.46
     ndk: 27.2.12479018
-    prebuild: |
-      cp -a $$llama.cpp$$ app/src/main/cpp/llama.cpp
-    buildjni:
-      - yes
+    srclibs:
+      - onnxruntime@v1.24.3
+      - sherpa-onnx@v1.13.3
+      - llama.cpp@master
+    rm:
+      - app/src/main/jniLibs
+    build: |
+      # Build onnxruntime + sherpa-onnx from source and stage the .so for the gradle build.
+      export ANDROID_NDK=$$NDK$$
+      export WORK=$$onnxruntime$$/../.lrk-native
+      # (build scripts live in scripts/; they clone is replaced by the srclib checkouts)
+      bash $$VERSION$$/scripts/build-onnxruntime-android.sh
+      bash $$VERSION$$/scripts/build-sherpa-android.sh
+      mkdir -p ../src/main/jniLibs/arm64-v8a
+      cp $$WORK$$/sherpa-android-arm64/*.so ../src/main/jniLibs/arm64-v8a/
+
+# ──────────────────────────────────────────────────────────────────────────────────────────
+# REMAINING F-DROID-SPECIFIC WORK (the source build itself is proven; this is the open blocker):
+#
+# F-Droid build servers run OFFLINE after srclib checkout. onnxruntime's CMake pulls ~20
+# dependencies via FetchContent at configure time (onnx, protobuf, abseil, flatbuffers, re2,
+# date, nlohmann_json, cpuinfo, eigen, …) — that network access is BLOCKED on F-Droid.
+# To pass `fdroid build`, EACH onnxruntime dependency must be declared as its own srclib (or
+# vendored), and onnxruntime pointed at the local copies (cmake/deps.txt + *_FETCHCONTENT_*
+# overrides / -Donnxruntime_USE_PREINSTALLED_*). This is mechanical but sizeable — it is the
+# real reason onnxruntime apps are rare on f-droid.org, not the compile itself.
+#
+# Until then, distribute via the self-hosted repo (Route B); it permits the same source-built
+# .so and is live at https://vieenrose.github.io/live-radio-karaoke-android/repo
+# ──────────────────────────────────────────────────────────────────────────────────────────
 
 AutoUpdateMode: Version v%v
 UpdateCheckMode: Tags
-CurrentVersion: 1.0.0
-CurrentVersionCode: 1
+CurrentVersion: 1.0.1
+CurrentVersionCode: 2
