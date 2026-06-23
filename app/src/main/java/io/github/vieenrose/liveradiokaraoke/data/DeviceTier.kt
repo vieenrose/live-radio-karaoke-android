@@ -2,6 +2,7 @@ package io.github.vieenrose.liveradiokaraoke.data
 
 import android.app.ActivityManager
 import android.content.Context
+import android.provider.Settings
 
 /**
  * Port of performance_config.py, but the tier is chosen from device RAM instead of an
@@ -23,6 +24,11 @@ enum class DeviceTier(
 
     companion object {
         fun forDevice(context: Context): DeviceTier {
+            // Debug/QA override: `adb shell settings put global lrk_force_tier {ULTRA_LOW|LOW|NORMAL}`.
+            runCatching { Settings.Global.getString(context.contentResolver, "lrk_force_tier") }
+                .getOrNull()?.uppercase()?.let { forced ->
+                    entries.firstOrNull { it.name == forced }?.let { return it }
+                }
             val am = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
             val mem = ActivityManager.MemoryInfo().also { am.getMemoryInfo(it) }
             val totalGb = mem.totalMem / (1024.0 * 1024 * 1024)
