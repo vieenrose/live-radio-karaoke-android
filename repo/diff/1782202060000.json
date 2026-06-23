@@ -1,0 +1,40 @@
+{
+  "repo": {
+    "timestamp": 1782202111000,
+    "categories": {
+      "karaoke-fdroid-repo": null,
+      "Multimedia": {
+        "name": {
+          "en-US": "Multimedia"
+        }
+      }
+    }
+  },
+  "packages": {
+    "io.github.vieenrose.liveradiokaraoke": {
+      "metadata": {
+        "categories": [
+          "Multimedia"
+        ],
+        "issueTracker": "https://github.com/vieenrose/live-radio-karaoke-android/issues",
+        "license": "Apache-2.0",
+        "sourceCode": "https://github.com/vieenrose/live-radio-karaoke-android",
+        "webSite": "https://github.com/vieenrose/live-radio-karaoke-android",
+        "authorName": "vieenrose",
+        "summary": {
+          "en-US": "On-device live radio transcription with karaoke highlighting"
+        },
+        "description": {
+          "en-US": "Transcribes live radio streams in real time and highlights each word karaoke-style as it\nis spoken — entirely on-device. Streaming speech recognition (sherpa-onnx) for English,\nFrench and Mandarin, on-device summaries and live translation (Gemma 3 1B or a fully-open\nalternative), playback via Media3, bundled stations plus Radio Browser discovery, and\nSRT/TXT export.\n\nModels are downloaded once on first use and kept on the device. The Gemma model is under\nGoogle's non-free Gemma Terms of Use and downloads only after in-app consent; a fully-open\nmodel can be used instead."
+        }
+      },
+      "versions": {
+        "92d02b8c93002612eb06edce299e381b9434e9d0dcdb75a58c7a2060b810a77a": {
+          "antiFeatures": {
+            "NonFreeNet": {}
+          }
+        }
+      }
+    }
+  }
+}

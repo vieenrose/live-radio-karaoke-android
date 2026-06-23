@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fdroid>
+	<repo icon="icon.png" name="Live Radio Karaoke" pubkey="30820507308202efa003020102020806746ec9efe929b1300d06092a864886f70d01010b050030313110300e060355040b1307462d44726f6964311d301b060355040313146c756967692d696e737069726f6e3133353333303020170d3236303632333038303733395a180f32303533313130383038303733395a30313110300e060355040b1307462d44726f6964311d301b060355040313146c756967692d696e737069726f6e31333533333030820222300d06092a864886f70d01010105000382020f003082020a0282020100b33705bcedeedb3460c715b19f6057b05ce8b335c8c7e7d1f3c9d11fa88343081c2a8d6eab129a825b061560a6d8dc3dd8f530c705df29b41fe43e6169c9b88f48e3db3ff366d1e40cfadbb9aea544d1440218c63b2534ab030049335e6f9b20d5d7c8a3249109947322348b7fe48b107a48290b96c08e4cf5d60e449aa22991099bdd297387265b21ff73612cff722fa733e1bdb6158c335aa8b9ce4e51a920089307f053d4b5ac72877d62823c3a85b56a899e1c357198cf12322491a98ac214d49dd0208a59c126a3994225531bae81db551187d13b34aed894300bbb87785818bd39f82ec2d1be3809cf272844b506157c0dadc07bc73afc128274574b76ec22944063c73ecc7982972fa220d40905ccf628ae9adde9cd7de90fb88d94135255ab84d9f778d2b943cb9f811d2981592c17246b04aeede5be3428c5f9581c6bd3f21c556eaf97d461d7d96e71e19fd1f232a0c993d5b7720f5b918a684e604ffae40b738101eb4ebd1d6acfb4b773acb420c9582ed4ca8effac6082856c554d45713253baeea685acc1869fdb5db7120e204574612162edb340d7f6328bb29622a144ea0491953f88372d99b28cb6d7b4cfb420aa231ff40108caeed45fee091c64b936543a83e34c1ee97db1ff0d024f2759358a1b9e9bc757bec059c09ddbe25d25d80fe78b18191c4a359cd6a556c345594d51edf966cd1f4fc38c81cf0203010001a321301f301d0603551d0e0416041408f89c61f804af42f3e364541afdc696d6bc6525300d06092a864886f70d01010b050003820201004546c0f18907b812253146476423cd7519a330738b060185383e2f0c5671a828397350162b200b3e78ca6c93678df1e46b4d24df083118d5b1348c402c0aa44daca5013981707416c53fe33897ce30192b8c1e957e413898b00a8fca2c81abd91c138765773dec2d79675fb3652c93c7a4fe8acdd929af37556c446efb36ffd2688548aebd726e9a8cf339b3acb1ef842788d1c625a1d4a0b300dad63e14b1208d6a20367a3ad80efde0ca675c3a5bedf29a4336b49b0b4698a38a10a5c2d9492155cc8cfff9a370ddedd6eea5dab680e598f1eaf5e6b29dea5d8f82fcf0d42610e6f73e3802fea533fdb3795c7f60dd0a5471f9b1c0fad956f851abd297a5d97b8e211063a0ea9ad18e003d6469fbf5cefe0d1fdf25bb64385316d12594b3d3dff9e209fce9f1e2986ac82ae08eecb2bd46356f84c676769b1953beaabb10f3aef10e4283275ece6ae2bac69d434a27f33fbe6d101769ead7404583169b21ff1c990ac8ffaeb4a4e35a94c702370dfd84cd6ca9fb5a7d7dba262913b1ab3c113068e751f32f4d15652242e65cc53298f4c0bdf2071616693f0700ed92f44a62fec6f7ac742c8c642c09a33ab72313f708e2afaafe1c02cb578892b3fe5a68eb9897ffa52f32b6ffbedd435ba602cd38f5e9805dd06204afed2e5e60e537cfc07c6ceb103f916d7b1cfb70172ff243bf3c401b4de34da77c1da939cb5676f912" timestamp="1782202111" url="https://vieenrose.github.io/live-radio-karaoke-android/repo" version="20002">
+		<description>On-device live radio transcription with karaoke highlighting, summaries and translation. Personal F-Droid repo for the live-radio-karaoke-android app.</description>
+	</repo>
+	<application id="io.github.vieenrose.liveradiokaraoke">
+		<id>io.github.vieenrose.liveradiokaraoke</id>
+		<added>2026-06-23</added>
+		<lastupdated>2026-06-23</lastupdated>
+		<name>Live Radio Karaoke</name>
+		<summary>On-device live radio transcription with karaoke highlighting</summary>
+		<desc>Transcribes live radio streams in real time and highlights each word karaoke-style as it
+is spoken — entirely on-device. Streaming speech recognition (sherpa-onnx) for English,
+French and Mandarin, on-device summaries and live translation (Gemma 3 1B or a fully-open
+alternative), playback via Media3, bundled stations plus Radio Browser discovery, and
+SRT/TXT export.
+
+Models are downloaded once on first use and kept on the device. The Gemma model is under
+Google's non-free Gemma Terms of Use and downloads only after in-app consent; a fully-open
+model can be used instead.</desc>
+		<license>Apache-2.0</license>
+		<categories>Multimedia</categories>
+		<category>Multimedia</category>
+		<web>https://github.com/vieenrose/live-radio-karaoke-android</web>
+		<source>https://github.com/vieenrose/live-radio-karaoke-android</source>
+		<tracker>https://github.com/vieenrose/live-radio-karaoke-android/issues</tracker>
+		<author>vieenrose</author>
+		<marketversion>1.0.0</marketversion>
+		<marketvercode>1</marketvercode>
+		<antifeatures>NonFreeNet</antifeatures>
+		<package>
+			<version>1.0.0</version>
+			<versioncode>1</versioncode>
+			<apkname>live-radio-karaoke-1.0.0.apk</apkname>
+			<hash type="sha256">92d02b8c93002612eb06edce299e381b9434e9d0dcdb75a58c7a2060b810a77a</hash>
+			<size>5186154</size>
+			<sdkver>26</sdkver>
+			<targetSdkVersion>35</targetSdkVersion>
+			<added>2026-06-23</added>
+			<sig>8a406f707e923684b7ae73d3448dd31c</sig>
+			<permissions>ACCESS_NETWORK_STATE,FOREGROUND_SERVICE,FOREGROUND_SERVICE_MEDIA_PLAYBACK,INTERNET,POST_NOTIFICATIONS,WAKE_LOCK,io.github.vieenrose.liveradiokaraoke.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION</permissions>
+			<nativecode>arm64-v8a,armeabi-v7a,x86,x86_64</nativecode>
+		</package>
+	</application>
+</fdroid>

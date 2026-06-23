@@ -1,0 +1,91 @@
+{
+  "repo": {
+    "timestamp": 1782202111000,
+    "version": 20002,
+    "name": "Live Radio Karaoke",
+    "icon": "icon.png",
+    "address": "https://vieenrose.github.io/live-radio-karaoke-android/repo",
+    "description": "On-device live radio transcription with karaoke highlighting, summaries and translation. Personal F-Droid repo for the live-radio-karaoke-android app."
+  },
+  "requests": {
+    "install": [],
+    "uninstall": []
+  },
+  "apps": [
+    {
+      "antiFeatures": [
+        "NonFreeNet"
+      ],
+      "authorName": "vieenrose",
+      "categories": [
+        "Multimedia"
+      ],
+      "suggestedVersionName": "1.0.0",
+      "suggestedVersionCode": "1",
+      "description": "Transcribes live radio streams in real time and highlights each word karaoke-style as it\nis spoken \u2014 entirely on-device. Streaming speech recognition (sherpa-onnx) for English,\nFrench and Mandarin, on-device summaries and live translation (Gemma 3 1B or a fully-open\nalternative), playback via Media3, bundled stations plus Radio Browser discovery, and\nSRT/TXT export.\n\nModels are downloaded once on first use and kept on the device. The Gemma model is under\nGoogle's non-free Gemma Terms of Use and downloads only after in-app consent; a fully-open\nmodel can be used instead.",
+      "issueTracker": "https://github.com/vieenrose/live-radio-karaoke-android/issues",
+      "license": "Apache-2.0",
+      "name": "Live Radio Karaoke",
+      "sourceCode": "https://github.com/vieenrose/live-radio-karaoke-android",
+      "summary": "On-device live radio transcription with karaoke highlighting",
+      "webSite": "https://github.com/vieenrose/live-radio-karaoke-android",
+      "added": 1782202043000,
+      "packageName": "io.github.vieenrose.liveradiokaraoke",
+      "lastUpdated": 1782202043000
+    }
+  ],
+  "packages": {
+    "io.github.vieenrose.liveradiokaraoke": [
+      {
+        "added": 1782202043000,
+        "apkName": "live-radio-karaoke-1.0.0.apk",
+        "hash": "92d02b8c93002612eb06edce299e381b9434e9d0dcdb75a58c7a2060b810a77a",
+        "hashType": "sha256",
+        "minSdkVersion": 26,
+        "nativecode": [
+          "arm64-v8a",
+          "armeabi-v7a",
+          "x86",
+          "x86_64"
+        ],
+        "packageName": "io.github.vieenrose.liveradiokaraoke",
+        "sig": "8a406f707e923684b7ae73d3448dd31c",
+        "signer": "3f69c694fbe0c430ce907550acd1c44f8a05ffea4886fc0ab4382b9949876332",
+        "size": 5186154,
+        "targetSdkVersion": 35,
+        "uses-permission": [
+          [
+            "android.permission.INTERNET",
+            null
+          ],
+          [
+            "android.permission.ACCESS_NETWORK_STATE",
+            null
+          ],
+          [
+            "android.permission.WAKE_LOCK",
+            null
+          ],
+          [
+            "android.permission.FOREGROUND_SERVICE",
+            null
+          ],
+          [
+            "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+            null
+          ],
+          [
+            "android.permission.POST_NOTIFICATIONS",
+            null
+          ],
+          [
+            "io.github.vieenrose.liveradiokaraoke.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
+            null
+          ]
+        ],
+        "versionCode": 1,
+        "versionName": "1.0.0"
+      }
+    ]
+  }
+}
