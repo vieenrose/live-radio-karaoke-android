@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Ported from the web app's design tokens (frontend/css/style.css :root). -->
+    <color name="blue_dark">#001f3f</color>
+    <color name="blue_primary">#0074D9</color>
+    <color name="red_primary">#FF4136</color>
+    <color name="accent">#0074D9</color>
+    <color name="status_live">#4ade80</color>
+    <color name="status_warn">#ffd166</color>
+    <color name="ic_launcher_background">#001f3f</color>
+</resources>

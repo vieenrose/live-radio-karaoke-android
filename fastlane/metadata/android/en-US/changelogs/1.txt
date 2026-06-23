@@ -1,0 +1,3 @@
+First release: on-device live radio transcription with karaoke highlighting, summaries and
+translation. Streaming ASR via sherpa-onnx, summaries/translation via an on-device LLM, playback
+via Media3. Bundled stations + Radio Browser discovery, SRT/TXT export.

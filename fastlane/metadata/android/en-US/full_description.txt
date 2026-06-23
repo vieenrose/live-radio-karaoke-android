@@ -1,0 +1,16 @@
+Live Radio Karaoke transcribes live radio streams in real time and highlights each word
+karaoke-style as it is spoken — entirely on your device. No account, no server, no tracking.
+
+Features:
+* Real-time streaming speech recognition (sherpa-onnx) for English, French and Mandarin
+  Chinese, with code-switching and inline punctuation.
+* Karaoke word highlighting synced to playback, with an adjustable sync offset.
+* Live summaries and live translation generated on-device by a small language model
+  (Gemma 3 1B, or a fully-open alternative you can choose).
+* Hundreds of preset stations plus dynamic discovery via the Radio Browser directory.
+* Export the full transcript as plain text or SRT subtitles.
+
+All speech recognition and language-model inference run locally on your phone. Model files are
+downloaded once on first use and stored on the device. The Gemma model is distributed under
+Google's non-free Gemma Terms of Use and is downloaded only after you accept them; a fully-open
+model can be used instead.

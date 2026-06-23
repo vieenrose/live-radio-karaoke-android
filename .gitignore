@@ -1,0 +1,20 @@
+*.iml
+.gradle/
+.kotlin/
+/local.properties
+/.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+/app/build/
+local.properties
+
+# Native source dependencies are pulled at build time (see app/src/main/cpp/CMakeLists.txt)
+/app/src/main/cpp/llama.cpp/
+
+# Downloaded on-device models must never be committed (large + non-free terms for Gemma)
+*.gguf
+*.onnx
+*.tar.bz2

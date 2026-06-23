@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Live Radio Karaoke</string>
+    <string name="placeholder">Press ▶ to start — live transcription will appear here.</string>
+    <string name="change_station">Change Station</string>
+    <string name="export">Export</string>
+    <string name="translate_off">🌐 Translate: Off</string>
+    <string name="live_summary">Live Summary</string>
+    <string name="jump_live">Jump to live ●</string>
+    <string name="play">Play</string>
+    <string name="stop">Stop</string>
+    <string name="mute">Mute</string>
+    <string name="sync_offset">Sync offset</string>
+
+    <!-- Notification channel -->
+    <string name="channel_playback">Playback</string>
+
+    <!-- First-run / model download -->
+    <string name="first_run_title">First-time setup</string>
+    <string name="first_run_body">Live Radio Karaoke runs speech recognition and the summary/translation model fully on your device. The required model files are downloaded once.</string>
+    <string name="download_models">Download models</string>
+
+    <!-- Gemma licence consent -->
+    <string name="gemma_consent_title">Gemma model terms</string>
+    <string name="gemma_consent_body">The on-device summary &amp; translation model is Google\'s Gemma 3 1B, distributed under the Gemma Terms of Use (a non-free licence). It is downloaded from Hugging Face and never bundled with this app. You may instead choose a fully-open model in Settings.</string>
+    <string name="gemma_view_terms">View Gemma Terms</string>
+    <string name="accept_download">Accept &amp; download</string>
+    <string name="choose_open_model">Use an open model instead</string>
+</resources>

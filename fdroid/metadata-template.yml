@@ -1,0 +1,43 @@
+# Template for fdroiddata/metadata/io.github.vieenrose.liveradiokaraoke.yml
+# Builds the on-device AI from source; declares the runtime Gemma download as NonFreeNet.
+Categories:
+  - Multimedia
+License: Apache-2.0
+AuthorName: vieenrose
+SourceCode: https://github.com/vieenrose/live-radio-karaoke-android
+IssueTracker: https://github.com/vieenrose/live-radio-karaoke-android/issues
+
+AntiFeatures:
+  NonFreeNet:
+    en-US: >-
+      The on-device summary/translation model (Google Gemma 3 1B) is distributed under the
+      non-free Gemma Terms of Use and is downloaded from Hugging Face at runtime after an
+      in-app consent screen. A fully-open alternative model (LFM2.5 / Qwen2.5, Apache-2.0)
+      can be selected instead. ASR models are downloaded from the k2-fsa release server.
+
+RepoType: git
+Repo: https://github.com/vieenrose/live-radio-karaoke-android.git
+
+# llama.cpp and sherpa-onnx (+ onnxruntime) are pulled as srclibs and compiled from source via
+# the NDK/CMake build so no prebuilt binaries enter the APK. The `fdroid` product flavor selects
+# the source-built native libraries.
+Builds:
+  - versionName: 1.0.0
+    versionCode: 1
+    commit: v1.0.0
+    subdir: app
+    gradle:
+      - fdroid
+    srclibs:
+      - llama.cpp@master
+      - sherpa-onnx@v1.10.46
+    ndk: 27.2.12479018
+    prebuild: |
+      cp -a $$llama.cpp$$ app/src/main/cpp/llama.cpp
+    buildjni:
+      - yes
+
+AutoUpdateMode: Version v%v
+UpdateCheckMode: Tags
+CurrentVersion: 1.0.0
+CurrentVersionCode: 1

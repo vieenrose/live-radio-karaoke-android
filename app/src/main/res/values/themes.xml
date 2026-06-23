@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base theme: Compose drives the UI; this just sets the window chrome to the dark-blue brand. -->
+    <style name="Theme.LiveRadioKaraoke" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/blue_dark</item>
+        <item name="android:statusBarColor">@color/blue_dark</item>
+        <item name="android:navigationBarColor">@color/blue_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
