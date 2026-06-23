@@ -17,11 +17,14 @@ android {
         applicationId = "io.github.vieenrose.liveradiokaraoke"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.0.1"
         vectorDrawables { useSupportLibrary = true }
         if (withNative) {
-            ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
+            // Default to both ABIs; override with -Pabi=arm64-v8a to ship a smaller per-ABI APK.
+            val abis = (project.findProperty("abi") as String?)?.split(",")?.map { it.trim() }
+                ?: listOf("arm64-v8a", "x86_64")
+            ndk { abiFilters += abis }
         }
     }
 
