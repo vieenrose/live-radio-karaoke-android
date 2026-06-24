@@ -1,0 +1,17 @@
+# onnxruntime v1.24.3 Android-arm64-CPU build dependencies (offline mirror / ortdeps srclib).
+# Format: name;upstream_archive_url;sha1   — fetch these into one dir = the offline mirror.
+# protoc is built from the protobuf source (build-host-protoc.sh), NOT taken as a blob.
+abseil_cpp;https://github.com/abseil/abseil-cpp/archive/refs/tags/20250814.0.zip;a9eb1d648cbca4d4d788737e971a6a7a63726b07
+date;https://github.com/HowardHinnant/date/archive/refs/tags/v3.0.1.zip;2dac0c81dc54ebdd8f8d073a75c053b04b56e159
+eigen;https://github.com/eigen-mirror/eigen/archive/1d8b82b0740839c0de7f1242a3585e3390ff5f33/eigen-1d8b82b0740839c0de7f1242a3585e3390ff5f33.zip;05b19b49e6fbb91246be711d801160528c135e34
+flatbuffers;https://github.com/google/flatbuffers/archive/refs/tags/v23.5.26.zip;59422c3b5e573dd192fead2834d25951f1c1670c
+googletest;https://github.com/google/googletest/archive/refs/tags/v1.17.0.zip;f638fa0e724760e2ba07ff8cfba32cd644e1ce28
+microsoft_gsl;https://github.com/microsoft/GSL/archive/refs/tags/v4.0.0.zip;cf368104cd22a87b4dd0c80228919bb2df3e2a14
+kleidiai;https://github.com/ARM-software/kleidiai/archive/refs/tags/v1.20.0.tar.gz;6895e72b3d5cf1173358164cb3d64c9d7d33cc84
+mp11;https://github.com/boostorg/mp11/archive/refs/tags/boost-1.82.0.zip;9bc9e01dffb64d9e0773b2e44d2f22c51aace063
+json;https://github.com/nlohmann/json/archive/refs/tags/v3.11.3.zip;5e88795165cc8590138d1f47ce94ee567b85b4d6
+onnx;https://github.com/onnx/onnx/archive/refs/tags/v1.20.1.zip;30b80c81a1a381188896e86abe460c3c3f3091fd
+protobuf;https://github.com/protocolbuffers/protobuf/archive/refs/tags/v21.12.zip;7cf2733949036c7d52fda017badcab093fe73bfa
+pytorch_cpuinfo;https://github.com/pytorch/cpuinfo/archive/403d652dca4c1046e8145950b1c0997a9f748b57.zip;30b2a07fe4bae8574f89176e56274cacdd6d135b
+re2;https://github.com/google/re2/archive/refs/tags/2024-07-02.zip;646e1728269cde7fcef990bf4a8e87b047882e88
+safeint;https://github.com/dcleblanc/SafeInt/archive/refs/tags/3.0.28.zip;23f252040ff6cb9f1fd18575b32fa8fb5928daac

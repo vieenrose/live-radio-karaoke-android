@@ -38,8 +38,12 @@ export PATH="$WORK/buildenv/bin:$PATH"
 # kept, so integrity is still verified). VERIFIED 2026-06 to configure with zero network under
 # `unshare -rn`. Set OFFLINE_DEPS_MIRROR=<dir> to enable; on a networked machine the archives are
 # fetched once into that dir, after which the build needs no network.
+# Note: protoc_linux_x64 (onnxruntime's prebuilt host protoc) is intentionally NOT mirrored —
+# in offline mode we build protoc from the protobuf source below and pass --path_to_protoc_exe,
+# so the build pulls no prebuilt binary blob.
 DEPS_FOR_ANDROID_CPU="abseil_cpp date eigen flatbuffers googletest microsoft_gsl kleidiai mp11 \
-json onnx protobuf pytorch_cpuinfo re2 safeint protoc_linux_x64"
+json onnx protobuf pytorch_cpuinfo re2 safeint"
+PROTOC_ARG=()
 if [ -n "${OFFLINE_DEPS_MIRROR:-}" ]; then
   mkdir -p "$OFFLINE_DEPS_MIRROR"
   [ -f "$ORT_SRC/cmake/deps.txt.orig" ] || cp "$ORT_SRC/cmake/deps.txt" "$ORT_SRC/cmake/deps.txt.orig"
@@ -54,6 +58,10 @@ if [ -n "${OFFLINE_DEPS_MIRROR:-}" ]; then
     { if($1 in n){ c=split($2,p,"/"); $2="file://" mir "/" p[c] } print }' \
     "$ORT_SRC/cmake/deps.txt.orig" > "$ORT_SRC/cmake/deps.txt"
   echo "Offline mirror ready ($(echo $DEPS_FOR_ANDROID_CPU | wc -w) deps in $OFFLINE_DEPS_MIRROR)"
+  # Build host protoc from source (blob-free) and tell onnxruntime to use it.
+  HOST_PROTOC="$(bash "$(dirname "$0")/build-host-protoc.sh")"
+  PROTOC_ARG=(--path_to_protoc_exe "$HOST_PROTOC")
+  echo "Using source-built host protoc: $HOST_PROTOC"
 fi
 
 cd "$ORT_SRC"
@@ -69,7 +77,8 @@ python tools/ci_build/build.py \
   --parallel "$PARALLEL" \
   --skip_tests \
   --cmake_generator Ninja \
-  --compile_no_warning_as_error
+  --compile_no_warning_as_error \
+  "${PROTOC_ARG[@]}"
 
 mkdir -p "$OUT_DIR"
 cp "build/android-arm64-v8a/Release/libonnxruntime.so" "$OUT_DIR/"
