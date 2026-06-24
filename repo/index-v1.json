@@ -1,6 +1,6 @@
 {
   "repo": {
-    "timestamp": 1782279983000,
+    "timestamp": 1782280603000,
     "version": 20002,
     "name": "Live Radio Karaoke",
     "icon": "icon.png",
@@ -20,8 +20,8 @@
       "categories": [
         "Multimedia"
       ],
-      "suggestedVersionName": "1.0.3",
-      "suggestedVersionCode": "4",
+      "suggestedVersionName": "1.0.4",
+      "suggestedVersionCode": "5",
       "description": "Transcribes live radio streams in real time and highlights each word karaoke-style as it\nis spoken \u2014 entirely on-device. Streaming speech recognition (sherpa-onnx) for English,\nFrench and Mandarin, on-device summaries and live translation (Gemma 3 1B or a fully-open\nalternative), playback via Media3, bundled stations plus Radio Browser discovery, and\nSRT/TXT export.\n\nModels are downloaded once on first use and kept on the device. The Gemma model is under\nGoogle's non-free Gemma Terms of Use and downloads only after in-app consent; a fully-open\nmodel can be used instead.",
       "issueTracker": "https://github.com/vieenrose/live-radio-karaoke-android/issues",
       "license": "Apache-2.0",
@@ -29,17 +29,17 @@
       "sourceCode": "https://github.com/vieenrose/live-radio-karaoke-android",
       "summary": "On-device live radio transcription with karaoke highlighting",
       "webSite": "https://github.com/vieenrose/live-radio-karaoke-android",
-      "added": 1782279983000,
+      "added": 1782280603000,
       "packageName": "io.github.vieenrose.liveradiokaraoke",
-      "lastUpdated": 1782279983000
+      "lastUpdated": 1782280603000
     }
   ],
   "packages": {
     "io.github.vieenrose.liveradiokaraoke": [
       {
-        "added": 1782279983000,
-        "apkName": "LiveRadioKaraoke-1.0.3-arm64.apk",
-        "hash": "8721b417ec051393b933d0e32708a86cf5b5fa25f11499d66cdbb109eb7b5ec5",
+        "added": 1782280603000,
+        "apkName": "LiveRadioKaraoke-1.0.4-arm64.apk",
+        "hash": "f3ba7aa7c8441f8b989598bd29e4ee98f617d366abecee8b8489b7bd3198d2a0",
         "hashType": "sha256",
         "minSdkVersion": 26,
         "nativecode": [
@@ -80,8 +80,8 @@
             null
           ]
         ],
-        "versionCode": 4,
-        "versionName": "1.0.3"
+        "versionCode": 5,
+        "versionName": "1.0.4"
       }
     ]
   }
