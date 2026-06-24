@@ -11,7 +11,7 @@
 
 <img src="docs/screenshots/transcription.png" width="300" alt="Live transcription with translation" />
 
-*Live English transcription with inline punctuation and parallel Chinese translation — verified on a Pixel 6.*
+*Live English transcription + parallel Chinese translation, with the on-device models shown — verified on a Pixel 6.*
 
 </div>
 
@@ -45,6 +45,7 @@ summarise and translate it live. A native Kotlin/Jetpack-Compose port of the ori
 - 📡 **35 bundled stations** + dynamic **discovery** via the Radio Browser directory.
 - ⤓ **Export** the full transcript as SRT subtitles or plain text.
 - 🔒 **Private by design** — all recognition and inference run locally; nothing is sent anywhere.
+- 🧠 **Transparent** — the live panel shows exactly which on-device STT and LLM models are running.
 
 ## Install
 
