@@ -41,27 +41,32 @@ Builds:
       - app/src/main/jniLibs
     build: |
       # Build onnxruntime + sherpa-onnx from source and stage the .so for the gradle build.
+      # OFFLINE_DEPS_MIRROR makes onnxruntime build with NO network (see note below).
       export ANDROID_NDK=$$NDK$$
-      export WORK=$$onnxruntime$$/../.lrk-native
-      # (build scripts live in scripts/; they clone is replaced by the srclib checkouts)
+      export WORK="$(pwd)/../.lrk-native"
+      export OFFLINE_DEPS_MIRROR="$$ortdeps$$"     # srclib holding the 15 onnxruntime dep archives
       bash $$VERSION$$/scripts/build-onnxruntime-android.sh
       bash $$VERSION$$/scripts/build-sherpa-android.sh
       mkdir -p ../src/main/jniLibs/arm64-v8a
       cp $$WORK$$/sherpa-android-arm64/*.so ../src/main/jniLibs/arm64-v8a/
 
 # ──────────────────────────────────────────────────────────────────────────────────────────
-# REMAINING F-DROID-SPECIFIC WORK (the source build itself is proven; this is the open blocker):
+# OFFLINE BUILD — SOLVED & VERIFIED (2026-06): onnxruntime's CMake FetchContent pulls ~15 deps
+# at configure time, which F-Droid's offline builder blocks. scripts/build-onnxruntime-android.sh
+# now mirrors those 15 archives and rewrites cmake/deps.txt to file:// URLs (SHA1 hashes kept).
+# Confirmed to configure with ZERO network under `unshare -rn` (Configuring done, exit 0).
+# The 15 deps: abseil_cpp date eigen flatbuffers googletest microsoft_gsl kleidiai mp11 json
+# onnx protobuf pytorch_cpuinfo re2 safeint protoc_linux_x64.
 #
-# F-Droid build servers run OFFLINE after srclib checkout. onnxruntime's CMake pulls ~20
-# dependencies via FetchContent at configure time (onnx, protobuf, abseil, flatbuffers, re2,
-# date, nlohmann_json, cpuinfo, eigen, …) — that network access is BLOCKED on F-Droid.
-# To pass `fdroid build`, EACH onnxruntime dependency must be declared as its own srclib (or
-# vendored), and onnxruntime pointed at the local copies (cmake/deps.txt + *_FETCHCONTENT_*
-# overrides / -Donnxruntime_USE_PREINSTALLED_*). This is mechanical but sizeable — it is the
-# real reason onnxruntime apps are rare on f-droid.org, not the compile itself.
+# Two items to finalize for an actual fdroiddata MR (mechanical, now de-risked):
+#   1. Provide those 15 archives on the offline builder — as one srclib `ortdeps` (a small repo
+#      holding the archives) referenced by $$ortdeps$$ above, or split per-dep srclibs.
+#   2. `protoc_linux_x64` is a PREBUILT host protoc binary (a blob). For a blob-free build, build
+#      protoc from the bundled protobuf source for the host instead (onnxruntime supports a host
+#      protobuf build) and pass --path_to_protoc_exe.
 #
-# Until then, distribute via the self-hosted repo (Route B); it permits the same source-built
-# .so and is live at https://vieenrose.github.io/live-radio-karaoke-android/repo
+# Self-hosted repo (Route B) ships the same source-built .so today:
+#   https://vieenrose.github.io/live-radio-karaoke-android/repo
 # ──────────────────────────────────────────────────────────────────────────────────────────
 
 AutoUpdateMode: Version v%v

@@ -85,12 +85,18 @@ A from-source-built APK (all three) compiles and packages cleanly; the rebuilt
 `libsherpa-onnx-jni.so` links our source-built `libonnxruntime.so` and exports the exact JNI
 symbols our vendored Kotlin API binds to.
 
-**Remaining blocker for f-droid.org (not the compile — the *offline* policy):** F-Droid build
-servers have no network after srclib checkout, but onnxruntime's CMake pulls ~20 dependencies via
-FetchContent at configure time (onnx, protobuf, abseil, flatbuffers, re2, eigen…). Each must be
-declared as its own srclib (or vendored) and onnxruntime pointed at the local copies. That's the
-mechanical-but-sizeable open task — and the real reason onnxruntime apps are rare on f-droid.org.
-Until it's done, ship via the self-hosted repo (Route B), which permits the same source-built `.so`.
+**Offline build (F-Droid's no-network policy) — solved & verified.** F-Droid builders have no
+network after srclib checkout, but onnxruntime's CMake FetchContent pulls ~15 deps at configure
+time. `scripts/build-onnxruntime-android.sh` (with `OFFLINE_DEPS_MIRROR=<dir>`) mirrors those
+archives and rewrites `cmake/deps.txt` to `file://` URLs (SHA1 hashes preserved), then builds.
+**Verified to configure with zero network under `unshare -rn`** (`Configuring done`, exit 0). The
+15 deps: abseil_cpp, date, eigen, flatbuffers, googletest, microsoft_gsl, kleidiai, mp11, json,
+onnx, protobuf, pytorch_cpuinfo, re2, safeint, protoc_linux_x64.
+
+Two mechanical items remain before an actual fdroiddata merge request: (1) ship those 15 archives
+on the offline builder as an `ortdeps` srclib; (2) `protoc_linux_x64` is a prebuilt host-protoc
+blob — for a fully blob-free build, compile protoc from the bundled protobuf source for the host.
+Meanwhile, the self-hosted repo (Route B) ships the same source-built `.so` today.
 
 ## Known fixup areas (first compile in Android Studio)
 

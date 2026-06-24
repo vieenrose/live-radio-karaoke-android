@@ -32,6 +32,30 @@ export PATH="$WORK/buildenv/bin:$PATH"
 [ -d "$ORT_SRC/.git" ] || git clone --depth 1 --branch "v$ORT_VERSION" \
   https://github.com/microsoft/onnxruntime.git "$ORT_SRC"
 
+# ── Offline mode (for F-Droid: the build must run with NO network) ────────────────────────────
+# onnxruntime's CMake FetchContent pulls ~15 deps over the network at configure time. To build
+# offline, mirror those archives locally and rewrite deps.txt to file:// URLs (SHA1 hashes are
+# kept, so integrity is still verified). VERIFIED 2026-06 to configure with zero network under
+# `unshare -rn`. Set OFFLINE_DEPS_MIRROR=<dir> to enable; on a networked machine the archives are
+# fetched once into that dir, after which the build needs no network.
+DEPS_FOR_ANDROID_CPU="abseil_cpp date eigen flatbuffers googletest microsoft_gsl kleidiai mp11 \
+json onnx protobuf pytorch_cpuinfo re2 safeint protoc_linux_x64"
+if [ -n "${OFFLINE_DEPS_MIRROR:-}" ]; then
+  mkdir -p "$OFFLINE_DEPS_MIRROR"
+  [ -f "$ORT_SRC/cmake/deps.txt.orig" ] || cp "$ORT_SRC/cmake/deps.txt" "$ORT_SRC/cmake/deps.txt.orig"
+  for k in $DEPS_FOR_ANDROID_CPU; do
+    url=$(grep -E "^$k;" "$ORT_SRC/cmake/deps.txt.orig" | cut -d';' -f2)
+    fn=$(basename "$url")
+    [ -f "$OFFLINE_DEPS_MIRROR/$fn" ] || wget -q -O "$OFFLINE_DEPS_MIRROR/$fn" "$url"
+  done
+  awk -F';' -v OFS=';' -v mir="$OFFLINE_DEPS_MIRROR" -v need="$DEPS_FOR_ANDROID_CPU" '
+    BEGIN{ split(need,a," "); for(i in a) n[a[i]]=1 }
+    /^#/||NF<3 { print; next }
+    { if($1 in n){ c=split($2,p,"/"); $2="file://" mir "/" p[c] } print }' \
+    "$ORT_SRC/cmake/deps.txt.orig" > "$ORT_SRC/cmake/deps.txt"
+  echo "Offline mirror ready ($(echo $DEPS_FOR_ANDROID_CPU | wc -w) deps in $OFFLINE_DEPS_MIRROR)"
+fi
+
 cd "$ORT_SRC"
 python tools/ci_build/build.py \
   --build_dir "build/android-arm64-v8a" \
