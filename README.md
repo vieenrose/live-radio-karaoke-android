@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="docs/icon.png" width="104" alt="Live Radio Karaoke app icon" />
+
 # 📻 Live Radio Karaoke — Android
 
 **Real-time radio transcription with karaoke highlighting, summaries and translation — running entirely on your phone.**
