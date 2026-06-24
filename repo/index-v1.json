@@ -1,6 +1,6 @@
 {
   "repo": {
-    "timestamp": 1782212404000,
+    "timestamp": 1782275709000,
     "version": 20002,
     "name": "Live Radio Karaoke",
     "icon": "icon.png",
@@ -29,17 +29,17 @@
       "sourceCode": "https://github.com/vieenrose/live-radio-karaoke-android",
       "summary": "On-device live radio transcription with karaoke highlighting",
       "webSite": "https://github.com/vieenrose/live-radio-karaoke-android",
-      "added": 1782212404000,
+      "added": 1782275709000,
       "packageName": "io.github.vieenrose.liveradiokaraoke",
-      "lastUpdated": 1782212404000
+      "lastUpdated": 1782275709000
     }
   ],
   "packages": {
     "io.github.vieenrose.liveradiokaraoke": [
       {
-        "added": 1782212404000,
-        "apkName": "live-radio-karaoke-1.0.1-ai-arm64.apk",
-        "hash": "26573b08ad4fb0268954ef61984515eed8a2a9384ebaabc5f913ab4dd8c42272",
+        "added": 1782275709000,
+        "apkName": "live-radio-karaoke-1.0.1-fromsource-arm64.apk",
+        "hash": "134327d8a791bbcde2ee05a5b95b3fe56e90122aa7e648a143b9f0fb4abf47d2",
         "hashType": "sha256",
         "minSdkVersion": 26,
         "nativecode": [
@@ -48,7 +48,7 @@
         "packageName": "io.github.vieenrose.liveradiokaraoke",
         "sig": "8a406f707e923684b7ae73d3448dd31c",
         "signer": "3f69c694fbe0c430ce907550acd1c44f8a05ffea4886fc0ab4382b9949876332",
-        "size": 40546639,
+        "size": 32616783,
         "targetSdkVersion": 35,
         "uses-permission": [
           [

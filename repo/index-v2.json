@@ -14,7 +14,7 @@
       }
     },
     "address": "https://vieenrose.github.io/live-radio-karaoke-android/repo",
-    "timestamp": 1782212404000,
+    "timestamp": 1782275709000,
     "categories": {
       "Multimedia": {
         "name": {
@@ -26,12 +26,12 @@
   "packages": {
     "io.github.vieenrose.liveradiokaraoke": {
       "metadata": {
-        "added": 1782212404000,
+        "added": 1782275709000,
         "categories": [
           "Multimedia"
         ],
         "issueTracker": "https://github.com/vieenrose/live-radio-karaoke-android/issues",
-        "lastUpdated": 1782212404000,
+        "lastUpdated": 1782275709000,
         "license": "Apache-2.0",
         "sourceCode": "https://github.com/vieenrose/live-radio-karaoke-android",
         "webSite": "https://github.com/vieenrose/live-radio-karaoke-android",
@@ -48,12 +48,12 @@
         "preferredSigner": "3f69c694fbe0c430ce907550acd1c44f8a05ffea4886fc0ab4382b9949876332"
       },
       "versions": {
-        "26573b08ad4fb0268954ef61984515eed8a2a9384ebaabc5f913ab4dd8c42272": {
-          "added": 1782212404000,
+        "134327d8a791bbcde2ee05a5b95b3fe56e90122aa7e648a143b9f0fb4abf47d2": {
+          "added": 1782275709000,
           "file": {
-            "name": "/live-radio-karaoke-1.0.1-ai-arm64.apk",
-            "sha256": "26573b08ad4fb0268954ef61984515eed8a2a9384ebaabc5f913ab4dd8c42272",
-            "size": 40546639
+            "name": "/live-radio-karaoke-1.0.1-fromsource-arm64.apk",
+            "sha256": "134327d8a791bbcde2ee05a5b95b3fe56e90122aa7e648a143b9f0fb4abf47d2",
+            "size": 32616783
           },
           "manifest": {
             "nativecode": [
