@@ -144,7 +144,24 @@ object Config {
         else (LANGUAGE_FALLBACK[detected] ?: "en") to true
 
     fun asrModelForLanguage(language: String): AsrModelSpec {
-        val key = ASR_MODEL_FOR[language] ?: "x-asr-zh-en-1920ms"
+        val key = ASR_MODEL_FOR[language] ?: "x-asr-zh-en-480ms"
         return ASR_MODELS.getValue(key)
+    }
+
+    /** Short human label for the engine-info row (e.g. "X-ASR zh·en 480ms", "Gemma 3 1B"). */
+    fun asrLabel(key: String): String = when {
+        key.startsWith("x-asr-zh-en-") -> "X-ASR zh·en ${key.removePrefix("x-asr-zh-en-")}"
+        key == "fr-kroko" -> "Zipformer fr"
+        key == "en-20M" -> "Zipformer en 20M"
+        key == "zh-14M" -> "Zipformer zh 14M"
+        else -> key
+    }
+
+    fun llmLabel(key: String): String = when (key) {
+        "gemma" -> "Gemma 3 1B"
+        "qwen2.5-1.5b" -> "Qwen2.5 1.5B"
+        "lfm2.5-1.2b" -> "LFM2.5 1.2B"
+        "lfm2.5-350m" -> "LFM2.5 350M"
+        else -> key
     }
 }

@@ -40,6 +40,8 @@ fun MainScreen(vm: KaraokeViewModel) {
     val sync by vm.userSyncOffset.collectAsState()
     val download by vm.download.collectAsState()
     val dlVisible by vm.downloadDialogVisible.collectAsState()
+    val sttLabel by vm.sttModelLabel.collectAsState()
+    val llmLabel by vm.llmModelLabel.collectAsState()
     val discovered by vm.discovered.collectAsState()
     val target by vm.targetLanguage.collectAsState()
 
@@ -83,12 +85,12 @@ fun MainScreen(vm: KaraokeViewModel) {
             if (wide) {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     TranscriptView(utterances, sync, { vm.controller.positionSeconds() }, Modifier.weight(1f).fillMaxHeight())
-                    SummaryPanel(summaries, llmActivity, Modifier.width(320.dp))
+                    SummaryPanel(summaries, llmActivity, sttLabel, llmLabel, Modifier.width(320.dp).fillMaxHeight())
                 }
             } else {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     TranscriptView(utterances, sync, { vm.controller.positionSeconds() }, Modifier.weight(1f).fillMaxWidth())
-                    SummaryPanel(summaries, llmActivity, Modifier.fillMaxWidth().heightIn(max = 200.dp))
+                    SummaryPanel(summaries, llmActivity, sttLabel, llmLabel, Modifier.fillMaxWidth().heightIn(max = 240.dp))
                 }
             }
         }

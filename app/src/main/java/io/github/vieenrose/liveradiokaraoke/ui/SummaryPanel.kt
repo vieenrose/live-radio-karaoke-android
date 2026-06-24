@@ -2,6 +2,8 @@ package io.github.vieenrose.liveradiokaraoke.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +21,8 @@ import io.github.vieenrose.liveradiokaraoke.ui.theme.*
 fun SummaryPanel(
     summaries: List<SummaryItem>,
     activity: LlmActivity,
+    sttLabel: String,
+    llmLabel: String,
     modifier: Modifier = Modifier,
 ) {
     val latest = summaries.lastOrNull()
@@ -26,7 +30,8 @@ fun SummaryPanel(
         modifier
             .clip(RoundedCornerShape(12.dp))
             .background(SurfaceGlass)
-            .padding(14.dp),
+            .padding(14.dp)
+            .verticalScroll(rememberScrollState()),   // long summaries scroll instead of clipping
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween,
@@ -40,6 +45,8 @@ fun SummaryPanel(
             Text(latest.text, color = TextPrimary, fontSize = 15.sp, lineHeight = 21.sp)
             Text(timeAgo(latest.timestampMillis), color = TextSecondary, fontSize = 11.sp)
         }
+        // Engine info: which on-device models are running.
+        Text("STT  $sttLabel   ·   LLM  $llmLabel", color = TextSecondary, fontSize = 11.sp)
     }
 }
 

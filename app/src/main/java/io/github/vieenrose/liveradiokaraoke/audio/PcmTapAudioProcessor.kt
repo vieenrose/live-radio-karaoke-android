@@ -18,8 +18,13 @@ import java.nio.ByteOrder
 @UnstableApi
 class PcmTapAudioProcessor : BaseAudioProcessor() {
 
-    /** 16 kHz mono float chunks (~100 ms) for the ASR engine. Drop-oldest under back-pressure. */
-    val pcmChannel = Channel<FloatArray>(capacity = 64, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    /**
+     * 16 kHz mono float chunks (~100 ms) for the ASR engine. Small bounded buffer with drop-oldest:
+     * if ASR briefly falls behind (e.g. while the LLM is translating/summarizing on shared cores),
+     * stale audio is dropped so the transcript snaps back to ~live instead of lagging seconds behind.
+     * 6 chunks ≈ 0.6 s — keeps latency tight; the streaming model tolerates the occasional gap.
+     */
+    val pcmChannel = Channel<FloatArray>(capacity = 6, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
     private var inputRate = 16000
     private var channels = 1

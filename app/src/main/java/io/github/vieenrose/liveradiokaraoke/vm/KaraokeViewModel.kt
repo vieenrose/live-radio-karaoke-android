@@ -50,6 +50,12 @@ class KaraokeViewModel(app: Application) : AndroidViewModel(app) {
     val download = MutableStateFlow<DownloadState>(DownloadState.Idle)
     val downloadDialogVisible = MutableStateFlow(true)   // user can hide it and keep listening
 
+    // Engine-info row (which on-device models are in use) — shown in the summary panel.
+    val sttModelLabel = MutableStateFlow(if (nativeAvailable) "—" else "off (audio-only build)")
+    val llmModelLabel = MutableStateFlow(
+        if (nativeAvailable && tier.enableSummarizer) Config.llmLabel(Config.DEFAULT_LLM) else "off"
+    )
+
     private var llmEngine: LlmEngine? = null
     private var asrJob: Job? = null
     private var llmKey = Config.DEFAULT_LLM
@@ -80,6 +86,8 @@ class KaraokeViewModel(app: Application) : AndroidViewModel(app) {
         val asrSpec = Config.asrModelForLanguage(station.language)
         val llmSpec = Config.LLM_MODELS.getValue(llmKey)
         val needLlm = tier.enableSummarizer
+        sttModelLabel.value = Config.asrLabel(asrSpec.key)
+        llmModelLabel.value = if (needLlm) Config.llmLabel(llmSpec.key) else "off"
         // Gemma terms gate only the LLM download — playback keeps going.
         if (needLlm && !llmSpec.freeLicense && !gemmaConsented && !repo.isLlmReady(llmSpec)) {
             download.value = DownloadState.NeedGemmaConsent
