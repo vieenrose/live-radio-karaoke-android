@@ -3,6 +3,7 @@ package io.github.vieenrose.liveradiokaraoke.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -49,9 +50,20 @@ fun GemmaConsentDialog(onAccept: () -> Unit, onUseOpen: () -> Unit, onDismiss: (
 }
 
 @Composable
-fun DebugSheet(syncOffset: Float, onSync: (Float) -> Unit, deviceTier: String, native: Boolean) {
+fun DebugSheet(
+    syncOffset: Float,
+    onSync: (Float) -> Unit,
+    deviceTier: String,
+    native: Boolean,
+    lagSeconds: () -> Double,
+) {
     Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text("Debug", color = TextPrimary, fontWeight = FontWeight.Bold)
+        // Live transcript lag = audio playhead − newest transcribed token time.
+        val lag by androidx.compose.runtime.produceState(0.0) {
+            while (true) { androidx.compose.runtime.withFrameNanos {}; value = lagSeconds() }
+        }
+        Text("Transcript lag: ${"%.1f".format(lag)} s behind audio", color = TextPrimary, fontSize = 13.sp)
         Text("Sync offset: ${"%.2f".format(syncOffset)} s", color = TextSecondary, fontSize = 12.sp)
         Slider(value = syncOffset, onValueChange = onSync, valueRange = -3f..3f)
         Text("Device tier: $deviceTier", color = TextSecondary, fontSize = 12.sp)

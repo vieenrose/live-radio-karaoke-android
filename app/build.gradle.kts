@@ -17,8 +17,8 @@ android {
         applicationId = "io.github.vieenrose.liveradiokaraoke"
         minSdk = 26
         targetSdk = 35
-        versionCode = 6
-        versionName = "1.0.5"
+        versionCode = 13
+        versionName = "1.0.12"
         vectorDrawables { useSupportLibrary = true }
         if (withNative) {
             // Default to both ABIs; override with -Pabi=arm64-v8a to ship a smaller per-ABI APK.
@@ -97,6 +97,7 @@ dependencies {
     implementation(libs.media3.common)
 
     implementation(libs.okhttp)
+    implementation(libs.coil.compose)
     implementation(libs.coroutines.android)
     implementation(libs.commons.compress)
     implementation(libs.opencc4j)

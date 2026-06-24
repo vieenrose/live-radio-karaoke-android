@@ -41,7 +41,7 @@ summarise and translate it live. A native Kotlin/Jetpack-Compose port of the ori
 
 - 🎙️ **On-device speech recognition** (sherpa-onnx) — English, French and Mandarin, with code-switching and inline punctuation.
 - ✨ **Karaoke highlighting** synced to playback, with an adjustable sync offset.
-- 🌐 **Live translation** into 9 languages and **live summaries**, generated on-device by a small LLM (**Gemma 3 1B**, or a fully-open model you can choose).
+- 🌐 **Live translation** into 9 languages (Chinese rendered in Traditional / zh-TW) and **live summaries**, generated on-device by a small LLM — **LFM2.5-1.2B** (Apache-2.0) by default; Gemma 3 1B also selectable.
 - 📡 **35 bundled stations** + dynamic **discovery** via the Radio Browser directory.
 - ⤓ **Export** the full transcript as SRT subtitles or plain text.
 - 🔒 **Private by design** — all recognition and inference run locally; nothing is sent anywhere.
@@ -58,9 +58,9 @@ unknown apps", and open it. arm64, Android 8.0+.
 https://vieenrose.github.io/live-radio-karaoke-android/repo
 ```
 
-> On first launch the speech + language models download once and stay on your device. The summary/
-> translation model is Google's **Gemma 3 1B** (non-free Gemma Terms) — downloaded only after in-app
-> consent; a fully-open model can be chosen instead.
+> On first launch the speech + language models download once and stay on your device. The default
+> summary/translation model is **LFM2.5-1.2B** (Apache-2.0 — no consent needed). Google's **Gemma 3 1B**
+> is also selectable; being under the non-free Gemma Terms, it downloads only after in-app consent.
 
 ## Verified on real hardware
 
@@ -77,15 +77,15 @@ decoded audio timeline in one process.
 | Radio fetch + decode + playback | AndroidX **Media3 / ExoPlayer** (+ HLS) |
 | PCM tap → 16 kHz mono for ASR | custom pass-through `AudioProcessor` |
 | Speech-to-text | **sherpa-onnx** streaming zipformer transducer |
-| Summaries + translation | **llama.cpp** running **Gemma 3 1B** (one instance, serialized) |
+| Summaries + translation | **llama.cpp** running **LFM2.5-1.2B** (or Gemma 3 1B), one instance, serialized; each model's own chat template applied |
 | Karaoke sync | `withFrameNanos` loop over absolute token times |
 | UI | Jetpack Compose (Material 3) |
 
 ## Performance (tuned for Pixel 6)
 
 `libllama-android.so` is built with **ARMv8.2 + dotprod + fp16** (the Tensor SoC and essentially all
-2018+ arm64 phones support these; the default NDK build leaves them off), markedly speeding up Gemma's
-Q4 matmul. The summarizer/translator uses the device's performance cores; ASR runs in parallel on two
+2018+ arm64 phones support these; the default NDK build leaves them off), markedly speeding up the
+LLM's Q4 matmul. The summarizer/translator uses the device's performance cores; ASR runs in parallel on two
 threads. Speech recognition is real-time with large headroom; the LLM runs comfortably for live
 summaries and translation.
 
@@ -107,8 +107,8 @@ under network isolation. See **[`fdroid/`](fdroid/)** for the submission package
 ## Licensing
 
 App code is **Apache-2.0**; all dependencies are FOSS and source-buildable. Models are downloaded at
-runtime (never bundled), so the APK stays free — Gemma's non-free terms are gated behind in-app consent
-with an Apache-2.0 alternative offered. F-Droid AntiFeature: `NonFreeNet`.
+runtime (never bundled), so the APK stays free. The default LLM (LFM2.5-1.2B) is Apache-2.0; the optional
+Gemma 3 1B is non-free and gated behind in-app consent. F-Droid AntiFeature: `NonFreeNet`.
 
 ## Credits
 

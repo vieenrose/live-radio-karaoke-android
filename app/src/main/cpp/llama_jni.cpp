@@ -50,10 +50,11 @@ Java_io_github_vieenrose_liveradiokaraoke_llm_LlamaBridge_nativeLoad(
     return reinterpret_cast<jlong>(s);
 }
 
-// Low-temperature factual sampling — matches summarizer_service.py (temp 0.1 / top_k 50 / top_p 0.1 / rep 1.05).
+// Low-temperature factual sampling. Takes a system + user message and applies the LOADED MODEL'S
+// OWN chat template (Gemma, LFM2/ChatML, Qwen… all differ) so role markers never leak into output.
 extern "C" JNIEXPORT void JNICALL
 Java_io_github_vieenrose_liveradiokaraoke_llm_LlamaBridge_nativeStart(
-        JNIEnv *env, jobject, jlong handle, jstring jPrompt, jfloat temp, jint topK,
+        JNIEnv *env, jobject, jlong handle, jstring jSystem, jstring jUser, jfloat temp, jint topK,
         jfloat topP, jfloat repeatPenalty) {
     auto *s = reinterpret_cast<LlamaSession *>(handle);
     if (!s) return;
@@ -70,9 +71,30 @@ Java_io_github_vieenrose_liveradiokaraoke_llm_LlamaBridge_nativeStart(
     llama_sampler_chain_add(s->smpl, llama_sampler_init_temp(temp));
     llama_sampler_chain_add(s->smpl, llama_sampler_init_dist(LLAMA_DEFAULT_SEED));
 
-    const char *prompt = env->GetStringUTFChars(jPrompt, nullptr);
-    std::string text(prompt);
-    env->ReleaseStringUTFChars(jPrompt, prompt);
+    const char *sys = env->GetStringUTFChars(jSystem, nullptr);
+    const char *usr = env->GetStringUTFChars(jUser, nullptr);
+
+    std::vector<llama_chat_message> msgs;
+    if (sys && sys[0]) msgs.push_back({"system", sys});
+    msgs.push_back({"user", usr ? usr : ""});
+
+    const char *tmpl = llama_model_chat_template(s->model, nullptr);
+    std::string text;
+    std::vector<char> buf(8192);
+    int tn = llama_chat_apply_template(tmpl, msgs.data(), msgs.size(), /*add_ass*/ true,
+                                       buf.data(), (int) buf.size());
+    if (tn > (int) buf.size()) {
+        buf.resize(tn);
+        tn = llama_chat_apply_template(tmpl, msgs.data(), msgs.size(), true, buf.data(), (int) buf.size());
+    }
+    if (tn > 0) {
+        text.assign(buf.data(), tn);
+    } else {
+        // No recognized template — fall back to plain system+user text.
+        text = std::string(sys ? sys : "") + "\n\n" + std::string(usr ? usr : "");
+    }
+    env->ReleaseStringUTFChars(jSystem, sys);
+    env->ReleaseStringUTFChars(jUser, usr);
 
     int n_max = (int) text.size() + 64;
     std::vector<llama_token> tokens(n_max);

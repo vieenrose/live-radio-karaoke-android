@@ -15,12 +15,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.media3.common.util.UnstableApi
 import io.github.vieenrose.liveradiokaraoke.export.TranscriptExporter
+import androidx.compose.foundation.background
+import io.github.vieenrose.liveradiokaraoke.ui.theme.AppBackground
 import io.github.vieenrose.liveradiokaraoke.ui.theme.BlueDark
 import io.github.vieenrose.liveradiokaraoke.vm.DownloadState
 import io.github.vieenrose.liveradiokaraoke.vm.KaraokeViewModel
 
 private val LANGUAGES = listOf(
-    "Off" to null, "English" to "English", "French" to "French", "Chinese" to "Chinese",
+    "Off" to null, "English" to "English", "French" to "French", "Chinese" to "Traditional Chinese",
     "Spanish" to "Spanish", "German" to "German", "Japanese" to "Japanese",
     "Korean" to "Korean", "Portuguese" to "Portuguese", "Arabic" to "Arabic",
 )
@@ -49,11 +51,12 @@ fun MainScreen(vm: KaraokeViewModel) {
     var showDebug by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
-        containerColor = BlueDark,
+        modifier = Modifier.background(AppBackground),
+        containerColor = androidx.compose.ui.graphics.Color.Transparent,
         topBar = {
             TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = BlueDark),
-                title = { Text("Live Radio Karaoke", fontSize = 18.sp) },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = androidx.compose.ui.graphics.Color.Transparent),
+                title = { Text("Live Radio Karaoke", fontSize = 18.sp, fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold) },
                 actions = {
                     TranslateMenu(target) { vm.setTargetLanguage(it) }
                     ExportMenu { srt ->
@@ -122,7 +125,11 @@ fun MainScreen(vm: KaraokeViewModel) {
 
     if (showDebug) {
         ModalBottomSheet(onDismissRequest = { showDebug = false }, containerColor = BlueDark) {
-            DebugSheet(sync, vm::setSyncOffset, vm.deviceTier.name, vm.nativeAvailable)
+            DebugSheet(sync, vm::setSyncOffset, vm.deviceTier.name, vm.nativeAvailable, lagSeconds = {
+                val pos = vm.controller.positionSeconds()
+                val t = vm.utterances.value.lastOrNull()?.tokenTimes?.lastOrNull() ?: pos
+                (pos - t).coerceAtLeast(0.0)
+            })
         }
     }
 }

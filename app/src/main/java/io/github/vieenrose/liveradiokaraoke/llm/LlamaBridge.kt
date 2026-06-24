@@ -16,8 +16,8 @@ class LlamaBridge {
         return handle != 0L
     }
 
-    fun start(prompt: String, temp: Float = 0.1f, topK: Int = 50, topP: Float = 0.1f, repeatPenalty: Float = 1.05f) {
-        if (handle != 0L) nativeStart(handle, prompt, temp, topK, topP, repeatPenalty)
+    fun start(system: String, user: String, temp: Float = 0.1f, topK: Int = 50, topP: Float = 0.1f, repeatPenalty: Float = 1.05f) {
+        if (handle != 0L) nativeStart(handle, system, user, temp, topK, topP, repeatPenalty)
     }
 
     /** Next decoded piece, or "" at end-of-generation. */
@@ -28,7 +28,7 @@ class LlamaBridge {
     }
 
     private external fun nativeLoad(modelPath: String, nCtx: Int, nThreads: Int): Long
-    private external fun nativeStart(handle: Long, prompt: String, temp: Float, topK: Int, topP: Float, repeatPenalty: Float)
+    private external fun nativeStart(handle: Long, system: String, user: String, temp: Float, topK: Int, topP: Float, repeatPenalty: Float)
     private external fun nativeNext(handle: Long): String
     private external fun nativeFree(handle: Long)
 

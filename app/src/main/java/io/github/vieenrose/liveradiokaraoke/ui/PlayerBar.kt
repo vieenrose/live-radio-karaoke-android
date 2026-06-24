@@ -1,8 +1,12 @@
 package io.github.vieenrose.liveradiokaraoke.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.PlayArrow
@@ -56,11 +60,19 @@ fun PlayerBar(
         }
 
         val playing = state == PlaybackState.PLAYING || state == PlaybackState.BUFFERING || state == PlaybackState.CONNECTING
-        IconButton(onClick = { if (playing) onStop() else onPlay() }) {
+        Box(
+            Modifier
+                .padding(start = 4.dp)
+                .size(46.dp)
+                .clip(CircleShape)
+                .background(if (playing) RedPrimary else Accent)
+                .clickable { if (playing) onStop() else onPlay() },
+            contentAlignment = Alignment.Center,
+        ) {
             Icon(
                 if (playing) Icons.Filled.Stop else Icons.Filled.PlayArrow,
                 contentDescription = if (playing) "Stop" else "Play",
-                tint = if (playing) RedPrimary else StatusLive,
+                tint = Color.White,
             )
         }
     }

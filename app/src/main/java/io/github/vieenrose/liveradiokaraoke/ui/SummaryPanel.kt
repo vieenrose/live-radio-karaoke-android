@@ -1,6 +1,7 @@
 package io.github.vieenrose.liveradiokaraoke.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -28,25 +29,34 @@ fun SummaryPanel(
     val latest = summaries.lastOrNull()
     Column(
         modifier
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(16.dp))
             .background(SurfaceGlass)
-            .padding(14.dp)
-            .verticalScroll(rememberScrollState()),   // long summaries scroll instead of clipping
+            .border(1.dp, BorderGlass, RoundedCornerShape(16.dp))
+            .padding(14.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
+        // Fixed header — always visible regardless of summary length.
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()) {
-            Text("LIVE SUMMARY", color = TextSecondary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            Text("LIVE SUMMARY", color = Accent, fontSize = 12.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
             LlmActivityPill(activity)
         }
+        // Fixed engine-info + timestamp.
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()) {
+            Text("STT $sttLabel · LLM $llmLabel", color = TextSecondary, fontSize = 11.sp)
+            if (latest != null) Text(timeAgo(latest.timestampMillis), color = TextSecondary, fontSize = 11.sp)
+        }
+        Box(Modifier.fillMaxWidth().height(1.dp).background(BorderGlass))
+        // Only the summary text scrolls (bounded) so it never masks the info above.
         if (latest == null) {
             Text("Summaries appear here as the broadcast continues.", color = TextSecondary, fontSize = 13.sp)
         } else {
-            Text(latest.text, color = TextPrimary, fontSize = 15.sp, lineHeight = 21.sp)
-            Text(timeAgo(latest.timestampMillis), color = TextSecondary, fontSize = 11.sp)
+            Text(
+                latest.text, color = TextPrimary, fontSize = 15.sp, lineHeight = 22.sp,
+                modifier = Modifier.heightIn(max = 150.dp).verticalScroll(rememberScrollState()),
+            )
         }
-        // Engine info: which on-device models are running.
-        Text("STT  $sttLabel   ·   LLM  $llmLabel", color = TextSecondary, fontSize = 11.sp)
     }
 }
 

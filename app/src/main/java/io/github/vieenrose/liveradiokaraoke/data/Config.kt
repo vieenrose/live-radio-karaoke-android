@@ -73,19 +73,19 @@ object Config {
     )
 
     val LLM_MODELS: Map<String, LlmModelSpec> = listOf(
-        // Default per request. Gemma Terms of Use = NON-FREE → runtime download + consent gate.
-        LlmModelSpec("gemma", "google_gemma-3-1b-it-qat-Q4_0.gguf",
-            "bartowski/google_gemma-3-1b-it-qat-GGUF", reasoning = false, freeLicense = false),
-        // Fully-open alternatives for a zero-non-free path.
-        LlmModelSpec("qwen2.5-1.5b", "Qwen2.5-1.5B-Instruct-Q4_K_M.gguf",
-            "bartowski/Qwen2.5-1.5B-Instruct-GGUF"),
+        // Default: LFM2.5-1.2B (Apache-2.0) — strong quality and a free licence (no consent gate).
         LlmModelSpec("lfm2.5-1.2b", "LFM2.5-1.2B-Instruct-Q4_K_M.gguf",
             "LiquidAI/LFM2.5-1.2B-Instruct-GGUF"),
+        LlmModelSpec("qwen2.5-1.5b", "Qwen2.5-1.5B-Instruct-Q4_K_M.gguf",
+            "bartowski/Qwen2.5-1.5B-Instruct-GGUF"),
         LlmModelSpec("lfm2.5-350m", "LFM2.5-350M-Q4_K_M.gguf",
             "LiquidAI/LFM2.5-350M-GGUF"),
+        // Optional: Gemma 3 1B — NON-FREE Gemma Terms → runtime download behind a consent gate.
+        LlmModelSpec("gemma", "google_gemma-3-1b-it-qat-Q4_0.gguf",
+            "bartowski/google_gemma-3-1b-it-qat-GGUF", reasoning = false, freeLicense = false),
     ).associateBy { it.key }
 
-    const val DEFAULT_LLM = "gemma"
+    const val DEFAULT_LLM = "lfm2.5-1.2b"
 
     fun hfFileUrl(repoId: String, fileName: String) =
         "https://huggingface.co/$repoId/resolve/main/$fileName?download=true"

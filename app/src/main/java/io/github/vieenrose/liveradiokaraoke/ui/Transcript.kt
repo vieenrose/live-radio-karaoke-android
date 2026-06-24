@@ -1,6 +1,9 @@
 package io.github.vieenrose.liveradiokaraoke.ui
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -8,6 +11,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -86,20 +91,24 @@ fun TranscriptView(
 
 @Composable
 private fun UtteranceRow(u: Utterance, activeToken: Int) {
-    Column {
-        Text(
-            text = buildKaraoke(u, activeToken),
-            fontSize = 22.sp,
-            lineHeight = 30.sp,
-            color = if (u.summarized) StatusWarn.copy(alpha = 0.95f) else TextPrimary.copy(alpha = 0.85f),
-        )
+    val summarized = u.summarized
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .background(if (summarized) StatusWarn.copy(alpha = 0.10f) else SurfaceGlass)
+            .border(1.dp, if (summarized) StatusWarn.copy(alpha = 0.30f) else BorderGlass, RoundedCornerShape(14.dp))
+            .padding(horizontal = 14.dp, vertical = 11.dp),
+        verticalArrangement = Arrangement.spacedBy(7.dp),
+    ) {
+        Text(text = buildKaraoke(u, activeToken), fontSize = 19.sp, lineHeight = 27.sp)
         if (u.translation.isNotBlank()) {
             Text(
                 text = u.translation + if (u.translationStreaming) " …" else "",
-                fontSize = 16.sp,
+                fontSize = 14.5.sp,
+                lineHeight = 20.sp,
                 color = Accent,
                 fontStyle = FontStyle.Italic,
-                modifier = Modifier.padding(top = 2.dp, start = 8.dp),
             )
         }
     }
@@ -110,8 +119,9 @@ private fun buildKaraoke(u: Utterance, activeToken: Int): AnnotatedString = buil
         val active = i == activeToken
         withStyle(
             SpanStyle(
-                color = if (active) androidx.compose.ui.graphics.Color.White else TextPrimary.copy(alpha = 0.85f),
+                color = if (active) Color.White else TextPrimary.copy(alpha = 0.82f),
                 fontWeight = if (active) FontWeight.Bold else FontWeight.Normal,
+                background = if (active) Accent.copy(alpha = 0.32f) else Color.Transparent,
             )
         ) { append(tok) }
     }

@@ -94,17 +94,26 @@ class KaraokeViewModel(app: Application) : AndroidViewModel(app) {
             return
         }
         downloadDialogVisible.value = true
+        // ASR: download (if needed) then start — independent of the (much larger) LLM download.
         viewModelScope.launch {
             try {
                 if (!repo.isAsrReady(asrSpec))
                     repo.downloadAsr(asrSpec) { p -> download.value = DownloadState.Running("Speech-recognition model", frac(p)) }
-                if (needLlm && !repo.isLlmReady(llmSpec))
-                    repo.downloadLlm(llmSpec) { p -> download.value = DownloadState.Running("Summary / translation model", frac(p)) }
-                download.value = DownloadState.Idle
-                startTranscription(asrSpec, llmSpec, needLlm)
+                if (download.value is DownloadState.Running) download.value = DownloadState.Idle
+                startAsr(asrSpec)
             } catch (t: Throwable) {
-                download.value = DownloadState.Error(t.message ?: "model download failed")
+                download.value = DownloadState.Error(t.message ?: "speech-model download failed")
             }
+        }
+        // LLM: download + start in parallel — never blocks the live transcript.
+        if (needLlm) viewModelScope.launch {
+            try {
+                android.util.Log.i("LRK", "LLM setup: ${llmSpec.key} ready=${repo.isLlmReady(llmSpec)}")
+                if (!repo.isLlmReady(llmSpec))
+                    repo.downloadLlm(llmSpec) { p -> download.value = DownloadState.Running("Summary / translation model", frac(p)) }
+                if (download.value is DownloadState.Running) download.value = DownloadState.Idle
+                startLlm(llmSpec)
+            } catch (t: Throwable) { android.util.Log.e("LRK", "LLM setup failed", t) }
         }
     }
 
@@ -124,26 +133,9 @@ class KaraokeViewModel(app: Application) : AndroidViewModel(app) {
     private fun frac(p: ModelRepository.Progress): Float =
         if (p.totalBytes > 0) (p.downloadedBytes.toFloat() / p.totalBytes).coerceIn(0f, 1f) else 0f
 
-    /** Wire up ASR (+ LLM) against the already-playing stream. Models are present at this point. */
-    private fun startTranscription(asr: AsrModelSpec, llm: LlmModelSpec, needLlm: Boolean) {
-        if (!nativeAvailable) return
-
-        // LLM
-        if (needLlm && repo.isLlmReady(llm)) {
-            val engine = LlmEngine(repo.llmFile(llm).absolutePath, tier, viewModelScope).also { llmEngine = it }
-            engine.targetLanguage = targetLanguage.value
-            engine.onSummary = { item -> onSummary(item) }
-            engine.onTranslation = { id, text, streaming -> onTranslation(id, text, streaming) }
-            viewModelScope.launch {
-                if (engine.load()) {
-                    engine.start()
-                    // mirror activity state
-                    launch { engine.activity.collect { llmActivity.value = it } }
-                }
-            }
-        }
-
-        // ASR
+    /** Start streaming ASR against the already-playing stream (ASR model is present here). */
+    private fun startAsr(asr: AsrModelSpec) {
+        asrJob?.cancel()
         val files = repo.resolveAsrFiles(asr)
         val engine = AsrEngine(asr, files, tier.asrThreads)
         asrJob = viewModelScope.launch {
@@ -153,6 +145,23 @@ class KaraokeViewModel(app: Application) : AndroidViewModel(app) {
                 onUtterance = { u -> onUtterance(u) },
                 onFinalText = { id, text -> llmEngine?.onFinalUtterance(id, text) },
             )
+        }
+    }
+
+    /** Load + start the LLM (summaries + translation). LLM model is present here. */
+    private fun startLlm(llm: LlmModelSpec) {
+        if (!repo.isLlmReady(llm)) { android.util.Log.w("LRK", "startLlm: ${llm.key} NOT ready"); return }
+        val engine = LlmEngine(repo.llmFile(llm).absolutePath, tier, viewModelScope).also { llmEngine = it }
+        engine.targetLanguage = targetLanguage.value
+        engine.onSummary = { item -> onSummary(item) }
+        engine.onTranslation = { id, text, streaming -> onTranslation(id, text, streaming) }
+        viewModelScope.launch {
+            val ok = engine.load()
+            android.util.Log.i("LRK", "LLM ${llm.key} load=$ok size=${repo.llmFile(llm).length()}")
+            if (ok) {
+                engine.start()
+                launch { engine.activity.collect { llmActivity.value = it } }
+            }
         }
     }
 

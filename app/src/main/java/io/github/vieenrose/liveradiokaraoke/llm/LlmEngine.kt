@@ -52,13 +52,15 @@ class LlmEngine(
                 llmLock.withLock {
                     if (summarizing) return@withLock
                     activity.value = LlmActivity.TRANSLATING
+                    val zh = target.contains("Chinese", ignoreCase = true)
                     val sb = StringBuilder()
                     var n = 0
-                    generate(GemmaPrompt.translation(text, target), maxTokens = 160) { piece ->
+                    val (tSys, tUsr) = ChatPrompt.translation(text, target)
+                    generate(tSys, tUsr, maxTokens = 160) { piece ->
                         sb.append(piece)
-                        if (++n % 4 == 0) onTranslation?.invoke(id, sb.toString(), true)
+                        if (++n % 4 == 0) onTranslation?.invoke(id, toTw(sb.toString(), zh), true)
                     }
-                    onTranslation?.invoke(id, sb.toString().trim(), false)
+                    onTranslation?.invoke(id, toTw(sb.toString().trim(), zh), false)
                     if (!summarizing) activity.value = LlmActivity.IDLE
                 }
             }
@@ -94,7 +96,8 @@ class LlmEngine(
                 }
                 val sb = StringBuilder()
                 var n = 0
-                generate(GemmaPrompt.summary(input), maxTokens = 128) { piece ->
+                val (sSys, sUsr) = ChatPrompt.summary(input)
+                generate(sSys, sUsr, maxTokens = 128) { piece ->
                     sb.append(piece)
                     if (++n % 6 == 0) onSummary?.invoke(SummaryItem(sb.toString(), now(), ids, true))
                 }
@@ -113,8 +116,8 @@ class LlmEngine(
         }
     }
 
-    private inline fun generate(prompt: String, maxTokens: Int, onPiece: (String) -> Unit) {
-        bridge.start(prompt)
+    private inline fun generate(system: String, user: String, maxTokens: Int, onPiece: (String) -> Unit) {
+        bridge.start(system, user)
         var produced = 0
         while (produced < maxTokens) {
             val piece = bridge.next()
@@ -130,4 +133,10 @@ class LlmEngine(
     }
 
     private fun now() = System.currentTimeMillis()
+
+    /** Convert a Chinese translation to Traditional (zh-TW), matching the original app's OpenCC step. */
+    private fun toTw(s: String, isChinese: Boolean): String =
+        if (isChinese && s.isNotBlank())
+            runCatching { com.github.houbb.opencc4j.util.ZhConverterUtil.toTraditional(s) }.getOrDefault(s)
+        else s
 }
