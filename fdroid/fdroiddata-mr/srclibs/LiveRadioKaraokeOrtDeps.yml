@@ -1,0 +1,5 @@
+# fdroiddata srclib: onnxruntime build-dependency mirror (offline build).
+# Holds the 14 upstream archives onnxruntime fetches via CMake FetchContent, so the build needs
+# no network. Referenced as `LiveRadioKaraokeOrtDeps@main` in the app's Builds entry.
+RepoType: git
+Repo: https://github.com/vieenrose/lrk-ortdeps.git

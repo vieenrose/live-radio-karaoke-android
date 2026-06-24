@@ -1,0 +1,65 @@
+Categories:
+  - Multimedia
+License: Apache-2.0
+AuthorName: vieenrose
+SourceCode: https://github.com/vieenrose/live-radio-karaoke-android
+IssueTracker: https://github.com/vieenrose/live-radio-karaoke-android/issues
+
+AntiFeatures:
+  NonFreeNet:
+    en-US: >-
+      The on-device summary/translation model (Google Gemma 3 1B) is under the non-free Gemma
+      Terms of Use and is downloaded from Hugging Face at runtime after in-app consent. A
+      fully-open model (LFM2.5 / Qwen2.5, Apache-2.0) can be selected instead. ASR models are
+      downloaded from the k2-fsa release server.
+
+RepoType: git
+Repo: https://github.com/vieenrose/live-radio-karaoke-android.git
+
+# Build the whole native stack FROM SOURCE, OFFLINE, BLOB-FREE (all verified locally):
+#   onnxruntime v1.24.3 (+14 deps mirrored as LiveRadioKaraokeOrtDeps, host protoc from source)
+#   sherpa-onnx v1.13.3 (linked against the above)   llama.cpp (gradle externalNativeBuild)
+Builds:
+  - versionName: 1.0.1
+    versionCode: 2
+    commit: v1.0.1
+    subdir: app
+    gradle:
+      - fdroid
+    ndk: 27.2.12479018
+    srclibs:
+      - onnxruntime@v1.24.3
+      - sherpa-onnx@v1.13.3
+      - llama.cpp@7c908502ea0868e6ae913f79ba84ba844a5b386a
+      - LiveRadioKaraokeOrtDeps@main
+    # onnxruntime 1.24 needs cmake>=3.28 + ninja, present OFFLINE during the build. `sudo:` runs
+    # with network, so provision them here. (Debian's apt cmake may be <3.28; if so, fetch the
+    # official cmake binary instead — left as the one item to confirm on the F-Droid builder.)
+    sudo:
+      - apt-get update || true
+      - apt-get install -y ninja-build cmake
+    rm:
+      - app/src/main/jniLibs
+    build: |
+      export ANDROID_NDK=$$NDK$$
+      export ORT_USE_SYSTEM_TOOLS=1            # use the provisioned cmake/ninja (offline; no pip)
+      export OFFLINE_DEPS_MIRROR=$$LiveRadioKaraokeOrtDeps$$
+      WORK="$(pwd)/.native-build"; mkdir -p "$WORK"
+      export WORK
+      # Use the srclib checkouts instead of letting the scripts clone (offline).
+      ln -sfn $$onnxruntime$$ "$WORK/onnxruntime"
+      ln -sfn $$sherpa-onnx$$ "$WORK/sherpa-onnx"
+      bash ../scripts/build-onnxruntime-android.sh
+      bash ../scripts/build-sherpa-android.sh
+      # llama.cpp source for the gradle externalNativeBuild (-PwithNative via the fdroid flavor)
+      mkdir -p src/main/cpp/llama.cpp && cp -a $$llama.cpp$$/. src/main/cpp/llama.cpp/
+      # stage the two source-built .so for packaging
+      mkdir -p src/main/jniLibs/arm64-v8a
+      cp "$WORK"/sherpa-android-arm64/*.so src/main/jniLibs/arm64-v8a/
+    buildjni:
+      - yes
+
+AutoUpdateMode: Version v%v
+UpdateCheckMode: Tags
+CurrentVersion: 1.0.1
+CurrentVersionCode: 2

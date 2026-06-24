@@ -21,13 +21,18 @@ PARALLEL="${PARALLEL:-2}"                       # keep low: ORT TUs are RAM-hung
 
 mkdir -p "$WORK"
 
-# Recent cmake/ninja in an isolated venv (system cmake 3.22 is too old for ORT 1.24).
-if [ ! -x "$WORK/buildenv/bin/cmake" ]; then
-  python3 -m venv "$WORK/buildenv"
-  "$WORK/buildenv/bin/pip" -q install --upgrade pip
-  "$WORK/buildenv/bin/pip" -q install packaging numpy cmake ninja
+# onnxruntime 1.24 needs cmake >= 3.28 (Ubuntu's 3.22 is too old). By default we pip-install a
+# recent cmake/ninja into a venv. On an OFFLINE builder (e.g. F-Droid) that has cmake>=3.28 +
+# ninja already provisioned (via the recipe's `sudo: apt-get install`), set ORT_USE_SYSTEM_TOOLS=1
+# to skip the venv/pip (which would need network).
+if [ -z "${ORT_USE_SYSTEM_TOOLS:-}" ]; then
+  if [ ! -x "$WORK/buildenv/bin/cmake" ]; then
+    python3 -m venv "$WORK/buildenv"
+    "$WORK/buildenv/bin/pip" -q install --upgrade pip
+    "$WORK/buildenv/bin/pip" -q install packaging numpy cmake ninja
+  fi
+  export PATH="$WORK/buildenv/bin:$PATH"
 fi
-export PATH="$WORK/buildenv/bin:$PATH"
 
 [ -d "$ORT_SRC/.git" ] || git clone --depth 1 --branch "v$ORT_VERSION" \
   https://github.com/microsoft/onnxruntime.git "$ORT_SRC"
