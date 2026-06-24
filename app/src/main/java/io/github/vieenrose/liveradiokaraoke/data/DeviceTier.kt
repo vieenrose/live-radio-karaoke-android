@@ -16,8 +16,10 @@ enum class DeviceTier(
     val enableSummarizer: Boolean,
 ) {
     ULTRA_LOW(1, 10_000, 1024, 1, false),
-    LOW(1, 1800, 2048, 1, true),
-    NORMAL(2, 2000, 4096, 2, true);
+    LOW(1, 1800, 2048, 2, true),
+    // High-end (e.g. Pixel 6): use the 4 performance cores for the LLM decode; keep ASR at 2 so the
+    // two engines don't oversubscribe the big cores while the summarizer/translator is running.
+    NORMAL(2, 2000, 4096, 4, true);
 
     /** Keep ~5% of the transcript after a summary for continuity (CONTEXT_KEEPALIVE_CHARS). */
     val contextKeepAliveChars: Int get() = minOf(100, llmContextChars / 20)

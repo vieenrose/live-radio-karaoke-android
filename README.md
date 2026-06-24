@@ -1,118 +1,115 @@
-# Live Radio Karaoke — Android (on-device)
+<div align="center">
 
-Real-time, multilingual radio transcription with karaoke-style word highlighting, **running
-fully on-device**. A native Kotlin/Jetpack-Compose port of the [Live Radio Karaoke web
-app](https://huggingface.co/spaces/Luigi/Live-Radio-Karaoke), built for **F-Droid**: no servers,
-no tracking, all AI on the edge.
+# 📻 Live Radio Karaoke — Android
 
-- **ASR** — streaming speech-to-text via [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx)
-  (bilingual zh+en with inline punctuation, or French).
-- **Summarize + translate** — one on-device LLM (**Gemma 3 1B**, QAT Q4_0) via
-  [llama.cpp](https://github.com/ggml-org/llama.cpp), serving both summaries and live translation.
-- **Playback** — AndroidX **Media3 / ExoPlayer** streams the radio and a pass-through audio
-  processor taps decoded PCM (16 kHz mono) for ASR — one decode path, two consumers.
-- **Karaoke** — a per-frame loop maps the player position onto absolute token times.
+**Real-time radio transcription with karaoke highlighting, summaries and translation — running entirely on your phone.**
 
-> **Status:** complete source scaffold with full feature parity, committed for build in Android
-> Studio. It has **not** been compiled on the authoring machine (no Android SDK there). Expect a
-> few first-build fixups — see *Known fixup areas*.
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/vieenrose/live-radio-karaoke-android?label=download)](https://github.com/vieenrose/live-radio-karaoke-android/releases/latest)
+[![Platform](https://img.shields.io/badge/Android-8.0%2B%20(arm64)-3DDC84.svg)](#install)
+![On-device](https://img.shields.io/badge/AI-100%25%20on--device-FF4136.svg)
 
-## Architecture (Python web app → Android)
+<img src="docs/screenshots/transcription.png" width="300" alt="Live transcription with translation" />
 
-| Web app (Python/JS) | Android (Kotlin) |
+*Live English transcription with inline punctuation and parallel Chinese translation — verified on a Pixel 6.*
+
+</div>
+
+---
+
+No server. No account. No tracking. Live Radio Karaoke streams a radio station and, **fully on-device**,
+transcribes the speech word-by-word, highlights it karaoke-style in sync with the audio, and can
+summarise and translate it live. A native Kotlin/Jetpack-Compose port of the original
+[web app](https://huggingface.co/spaces/Luigi/Live-Radio-Karaoke), built for **F-Droid**.
+
+<div align="center">
+<table>
+<tr>
+<td><img src="docs/screenshots/translation.png" width="240" alt="English → Chinese"/></td>
+<td><img src="docs/screenshots/stations.png" width="240" alt="Station picker"/></td>
+<td><img src="docs/screenshots/home.png" width="240" alt="Home"/></td>
+</tr>
+<tr>
+<td align="center"><sub>Transcript + live translation</sub></td>
+<td align="center"><sub>Stations & discovery</sub></td>
+<td align="center"><sub>Home</sub></td>
+</tr>
+</table>
+</div>
+
+## Features
+
+- 🎙️ **On-device speech recognition** (sherpa-onnx) — English, French and Mandarin, with code-switching and inline punctuation.
+- ✨ **Karaoke highlighting** synced to playback, with an adjustable sync offset.
+- 🌐 **Live translation** into 9 languages and **live summaries**, generated on-device by a small LLM (**Gemma 3 1B**, or a fully-open model you can choose).
+- 📡 **35 bundled stations** + dynamic **discovery** via the Radio Browser directory.
+- ⤓ **Export** the full transcript as SRT subtitles or plain text.
+- 🔒 **Private by design** — all recognition and inference run locally; nothing is sent anywhere.
+
+## Install
+
+**1. Download the APK** (simplest) — grab the latest from
+**[Releases](https://github.com/vieenrose/live-radio-karaoke-android/releases/latest)**, allow "install
+unknown apps", and open it. arm64, Android 8.0+.
+
+**2. Add the F-Droid repo** (auto-updates) — in F-Droid / Droid-ify, add:
+```
+https://vieenrose.github.io/live-radio-karaoke-android/repo
+```
+
+> On first launch the speech + language models download once and stay on your device. The summary/
+> translation model is Google's **Gemma 3 1B** (non-free Gemma Terms) — downloaded only after in-app
+> consent; a fully-open model can be chosen instead.
+
+## Verified on real hardware
+
+Tested on a **Pixel 6**: live English/French/Mandarin transcription, Chinese translation, http & https
+stations, background-safe playback — all working. The screenshots above are straight from the device.
+
+## How it works
+
+Going on-device collapses the original web app's whole network layer — playback and ASR share one
+decoded audio timeline in one process.
+
+| Pipeline stage | Implementation |
 |---|---|
-| `core/audio_streamer.py` (aiohttp + ffmpeg) | `audio/RadioStreamController` (ExoPlayer) + `audio/PcmTapAudioProcessor` |
-| `core/asr_service.py` (sherpa-onnx) | `asr/AsrEngine` + `asr/OpenCcConverter` |
-| `core/summarizer_service.py` (llama-cpp) | `llm/LlmEngine` + `llm/LlamaBridge` (JNI) + `llm/GemmaPrompt` |
-| `core/connection_manager.py` (WebSocket fan-out) | *removed* — UI observes Kotlin `StateFlow`s |
-| `config.py` / `performance_config.py` | `data/Config` / `data/DeviceTier` |
-| `api/radio_browser.py` | `data/RadioBrowserApi` |
-| `app.py` startup downloads | `data/ModelRepository` + first-run UI |
-| `frontend/*` (HTML/CSS/JS) | `ui/*` (Jetpack Compose) |
+| Radio fetch + decode + playback | AndroidX **Media3 / ExoPlayer** (+ HLS) |
+| PCM tap → 16 kHz mono for ASR | custom pass-through `AudioProcessor` |
+| Speech-to-text | **sherpa-onnx** streaming zipformer transducer |
+| Summaries + translation | **llama.cpp** running **Gemma 3 1B** (one instance, serialized) |
+| Karaoke sync | `withFrameNanos` loop over absolute token times |
+| UI | Jetpack Compose (Material 3) |
 
-Going on-device collapses the network layer: playback and ASR share one decoded timeline in one
-process, so the WebSocket/clock-offset/epoch machinery is gone — token times anchor directly to
-`ExoPlayer.currentPosition`.
+## Performance (tuned for Pixel 6)
 
-## Build
+`libllama-android.so` is built with **ARMv8.2 + dotprod + fp16** (the Tensor SoC and essentially all
+2018+ arm64 phones support these; the default NDK build leaves them off), markedly speeding up Gemma's
+Q4 matmul. The summarizer/translator uses the device's performance cores; ASR runs in parallel on two
+threads. Speech recognition is real-time with large headroom; the LLM runs comfortably for live
+summaries and translation.
 
-Requirements: Android Studio (Ladybug+) or the command-line SDK, JDK 17+, NDK 27, CMake 3.22.1.
+## Build from source (and the F-Droid story)
 
-### 1. Audio-only / UI build (no native AI) — fastest
 ```bash
-./gradlew assembleDevDebug
+git clone https://github.com/vieenrose/live-radio-karaoke-android && cd live-radio-karaoke-android
+./gradlew assembleDevDebug                       # audio-only / UI (no native AI) — fast
+./scripts/fetch-native-libs.sh                   # llama.cpp + sherpa-onnx .so
+./gradlew assembleDevDebug -PwithNative          # full on-device build
 ```
-Builds the full app without the heavy native libs. ASR/LLM are disabled (the app is a radio
-player); everything else (UI, discovery, playback, export) works. Good for iterating on UI.
 
-### 2. Full on-device build (ASR + LLM)
-```bash
-./scripts/fetch-native-libs.sh        # clones llama.cpp, points you at the sherpa-onnx .so
-./gradlew assembleDevDebug -PwithNative
-```
-`-PwithNative` enables the CMake build of `llama.cpp` and packages the sherpa-onnx native
-libraries. Models are downloaded on first run (see below).
-
-### On-device models (downloaded at first run, never bundled)
-- **ASR**: sherpa-onnx X-ASR (zh+en) or fr-kroko — fetched from the k2-fsa GitHub release / HF.
-- **LLM**: **Gemma 3 1B** GGUF from Hugging Face.
+The **entire native stack builds from source** — onnxruntime v1.24.3, sherpa-onnx v1.13.3, llama.cpp —
+and was made **offline- and blob-free-buildable** for F-Droid (onnxruntime's CMake FetchContent deps
+are mirrored locally; its prebuilt host protoc is replaced by one built from source). Verified end-to-end
+under network isolation. See **[`fdroid/`](fdroid/)** for the submission package and the build scripts in
+**[`scripts/`](scripts/)**.
 
 ## Licensing
 
-- **App code: Apache-2.0** (`LICENSE`) — OSI-approved, F-Droid-eligible.
-- **Dependencies are all FOSS and source-buildable**: sherpa-onnx (Apache-2.0), onnxruntime (MIT),
-  llama.cpp (MIT), Media3/Compose/OkHttp/commons-compress (Apache-2.0), opencc4j (Apache-2.0).
-  No prebuilt binary blobs are committed.
-- **Models download at runtime, so the APK stays 100 % free:**
-  - **Gemma 3 1B** is under the **non-free "Gemma Terms of Use."** The app shows a **consent
-    screen** before downloading it, and offers a **fully-open alternative** (LFM2.5-1.2B /
-    Qwen2.5-1.5B, both Apache-2.0) for a zero-non-free path. For F-Droid this is declared as the
-    `NonFreeNet` AntiFeature.
-  - ASR models from k2-fsa are Apache/MIT (verify per model on its release page).
-
-## F-Droid
-
-`fdroid/metadata-template.yml` is the build recipe to drop into `fdroiddata`. The whole native
-stack builds **from source** (no prebuilt blobs) — **verified locally (2026-06)**:
-
-| Library | Source | Output | How |
-|---|---|---|---|
-| onnxruntime v1.24.3 | microsoft/onnxruntime | `libonnxruntime.so` (19 MB) | `scripts/build-onnxruntime-android.sh` |
-| sherpa-onnx v1.13.3 | k2-fsa/sherpa-onnx | `libsherpa-onnx-jni.so` (3.4 MB) | `scripts/build-sherpa-android.sh` (links the above) |
-| llama.cpp | ggml-org/llama.cpp | `libllama-android.so` (4.9 MB) | gradle `externalNativeBuild`, `-PwithNative` |
-
-A from-source-built APK (all three) compiles and packages cleanly; the rebuilt
-`libsherpa-onnx-jni.so` links our source-built `libonnxruntime.so` and exports the exact JNI
-symbols our vendored Kotlin API binds to.
-
-**Offline build (F-Droid's no-network policy) — solved & verified.** F-Droid builders have no
-network after srclib checkout, but onnxruntime's CMake FetchContent pulls ~15 deps at configure
-time. `scripts/build-onnxruntime-android.sh` (with `OFFLINE_DEPS_MIRROR=<dir>`) mirrors those
-archives and rewrites `cmake/deps.txt` to `file://` URLs (SHA1 hashes preserved), then builds.
-**Verified to configure with zero network under `unshare -rn`** (`Configuring done`, exit 0). The
-15 deps: abseil_cpp, date, eigen, flatbuffers, googletest, microsoft_gsl, kleidiai, mp11, json,
-onnx, protobuf, pytorch_cpuinfo, re2, safeint, protoc_linux_x64.
-
-**Blob-free too.** onnxruntime's prebuilt host protoc is a binary blob; `scripts/build-host-protoc.sh`
-builds protoc 3.21.12 from the protobuf source and the build passes `--path_to_protoc_exe`.
-Verified end-to-end inside `unshare -rn`: `Using custom protoc executable`, `onnx_pb` generated by
-the source protoc, compilation proceeded — **zero network, zero prebuilt blobs**.
-
-The only fdroiddata-specific step left is supplying the 14 dep archives on the offline build server
-as an `ortdeps` srclib — their exact name/url/sha1 list is in `fdroid/ortdeps-manifest.txt`.
-Meanwhile, the self-hosted repo (Route B) ships the same source-built `.so` today.
-
-## Known fixup areas (first compile in Android Studio)
-
-1. **`PcmTapAudioProcessor` / `RadioStreamController`** — Media3's audio-processor + `buildAudioSink`
-   APIs are `@UnstableApi` and shift between releases; signatures here target Media3 **1.5.1**.
-2. **sherpa-onnx native coordinates** — `app/src/main/java/com/k2fsa/sherpa/onnx/SherpaOnnx.kt`
-   is vendored to match the JNI symbols of `libsherpa-onnx-jni.so`; keep it in sync with the `.so`
-   version you ship (`scripts/fetch-native-libs.sh`).
-3. **llama.cpp JNI** — `app/src/main/cpp/llama_jni.cpp` targets the modern llama.cpp API
-   (`llama_model_load_from_file`, sampler chains); pin a `LLAMA_REF` known to match.
+App code is **Apache-2.0**; all dependencies are FOSS and source-buildable. Models are downloaded at
+runtime (never bundled), so the APK stays free — Gemma's non-free terms are gated behind in-app consent
+with an Apache-2.0 alternative offered. F-Droid AntiFeature: `NonFreeNet`.
 
 ## Credits
 
 Ports the architecture and station set of the original Live Radio Karaoke. sherpa-onnx Kotlin API
-files are vendored from k2-fsa/sherpa-onnx (Apache-2.0).
+vendored from [k2-fsa/sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) (Apache-2.0).
