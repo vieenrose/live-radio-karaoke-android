@@ -12,17 +12,18 @@ import io.github.vieenrose.liveradiokaraoke.ui.theme.TextSecondary
 import io.github.vieenrose.liveradiokaraoke.vm.DownloadState
 
 @Composable
-fun DownloadDialog(state: DownloadState.Running) {
+fun DownloadDialog(state: DownloadState.Running, onDismiss: () -> Unit) {
     AlertDialog(
-        onDismissRequest = {},
-        confirmButton = {},
-        title = { Text("Downloading models") },
+        onDismissRequest = onDismiss,
+        confirmButton = { TextButton(onClick = onDismiss) { Text("Listen while it downloads") } },
+        title = { Text("Setting up transcription") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text(state.label, color = TextSecondary, fontSize = 13.sp)
+                Text("Radio is already playing. ${state.label} is downloading once.",
+                    color = TextSecondary, fontSize = 13.sp)
                 LinearProgressIndicator(progress = { state.fraction }, modifier = Modifier.fillMaxWidth())
                 Text("${(state.fraction * 100).toInt()}%", color = TextSecondary, fontSize = 12.sp)
-                Text("Runs once. Models stay on your device.", color = TextSecondary, fontSize = 11.sp)
+                Text("Models stay on your device for next time.", color = TextSecondary, fontSize = 11.sp)
             }
         },
     )

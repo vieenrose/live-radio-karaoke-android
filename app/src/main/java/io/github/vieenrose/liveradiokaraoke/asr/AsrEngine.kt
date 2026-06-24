@@ -26,6 +26,12 @@ class AsrEngine(
     private val converter = OpenCcConverter(spec.openCc)
 
     private fun buildRecognizer(): OnlineRecognizer {
+        // Never hand sherpa-onnx an incomplete model — a missing .onnx makes createStream() crash
+        // the whole process with a native SIGSEGV. Fail cleanly (caught by the coroutine) instead.
+        listOf(files.tokens, files.encoder, files.decoder, files.joiner).forEach {
+            val f = java.io.File(it)
+            check(f.exists() && f.length() > 0L) { "ASR model file missing/empty: $it" }
+        }
         val model = OnlineModelConfig(
             transducer = OnlineTransducerModelConfig(
                 encoder = files.encoder, decoder = files.decoder, joiner = files.joiner,

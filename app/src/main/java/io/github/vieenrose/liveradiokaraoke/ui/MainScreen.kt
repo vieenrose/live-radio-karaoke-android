@@ -39,6 +39,7 @@ fun MainScreen(vm: KaraokeViewModel) {
     val volume by vm.volume.collectAsState()
     val sync by vm.userSyncOffset.collectAsState()
     val download by vm.download.collectAsState()
+    val dlVisible by vm.downloadDialogVisible.collectAsState()
     val discovered by vm.discovered.collectAsState()
     val target by vm.targetLanguage.collectAsState()
 
@@ -103,7 +104,7 @@ fun MainScreen(vm: KaraokeViewModel) {
     }
 
     when (val d = download) {
-        is DownloadState.Running -> DownloadDialog(d)
+        is DownloadState.Running -> if (dlVisible) DownloadDialog(d) { vm.downloadDialogVisible.value = false }
         is DownloadState.NeedGemmaConsent -> GemmaConsentDialog(
             onAccept = { vm.acceptGemmaTermsAndContinue() },
             onUseOpen = { vm.useOpenModelInstead() },

@@ -48,6 +48,7 @@ class KaraokeViewModel(app: Application) : AndroidViewModel(app) {
     val bundledStations: List<Station> = Config.STATIONS
     val discovered = MutableStateFlow<List<Station>>(emptyList())
     val download = MutableStateFlow<DownloadState>(DownloadState.Idle)
+    val downloadDialogVisible = MutableStateFlow(true)   // user can hide it and keep listening
 
     private var llmEngine: LlmEngine? = null
     private var asrJob: Job? = null
@@ -58,65 +59,66 @@ class KaraokeViewModel(app: Application) : AndroidViewModel(app) {
 
     // ---- Playback ----
     fun selectAndPlay(station: Station) {
+        currentStation.value = station
+        // 1) Radio plays IMMEDIATELY — never blocked on a model download.
+        startPlayback(station)
+        // 2) Transcription comes up in the background (download models if needed).
+        ensureTranscription(station)
+    }
+
+    private fun startPlayback(station: Station) {
+        stopPipeline()
+        utterances.value = emptyList()
+        sessionTranscript.clear()
+        controller.setVolume(volume.value)
+        controller.play(station.url)
+    }
+
+    /** Download the right models (if missing) then start ASR/LLM. Playback is already running. */
+    private fun ensureTranscription(station: Station) {
+        if (!nativeAvailable) return
         val asrSpec = Config.asrModelForLanguage(station.language)
         val llmSpec = Config.LLM_MODELS.getValue(llmKey)
         val needLlm = tier.enableSummarizer
-        val ready = (!nativeAvailable) ||
-            (repo.isAsrReady(asrSpec) && (!needLlm || repo.isLlmReady(llmSpec)))
-        if (!ready) {
-            currentStation.value = station
-            if (needLlm && !llmSpec.freeLicense && !gemmaConsented) {
-                download.value = DownloadState.NeedGemmaConsent
-            } else {
-                downloadThenPlay(station, asrSpec, llmSpec, needLlm)
-            }
+        // Gemma terms gate only the LLM download — playback keeps going.
+        if (needLlm && !llmSpec.freeLicense && !gemmaConsented && !repo.isLlmReady(llmSpec)) {
+            download.value = DownloadState.NeedGemmaConsent
             return
         }
-        startPipeline(station, asrSpec, llmSpec, needLlm)
+        downloadDialogVisible.value = true
+        viewModelScope.launch {
+            try {
+                if (!repo.isAsrReady(asrSpec))
+                    repo.downloadAsr(asrSpec) { p -> download.value = DownloadState.Running("Speech-recognition model", frac(p)) }
+                if (needLlm && !repo.isLlmReady(llmSpec))
+                    repo.downloadLlm(llmSpec) { p -> download.value = DownloadState.Running("Summary / translation model", frac(p)) }
+                download.value = DownloadState.Idle
+                startTranscription(asrSpec, llmSpec, needLlm)
+            } catch (t: Throwable) {
+                download.value = DownloadState.Error(t.message ?: "model download failed")
+            }
+        }
     }
 
     fun acceptGemmaTermsAndContinue() {
         gemmaConsented = true
-        val station = currentStation.value ?: return
-        val asrSpec = Config.asrModelForLanguage(station.language)
-        downloadThenPlay(station, asrSpec, Config.LLM_MODELS.getValue(llmKey), tier.enableSummarizer)
+        download.value = DownloadState.Idle
+        currentStation.value?.let { ensureTranscription(it) }
     }
 
     /** Switch to a fully-open LLM (skips the Gemma terms). */
     fun useOpenModelInstead() {
         llmKey = "lfm2.5-1.2b"
-        val station = currentStation.value ?: return
-        selectAndPlay(station)
-    }
-
-    private fun downloadThenPlay(station: Station, asr: AsrModelSpec, llm: LlmModelSpec, needLlm: Boolean) {
-        viewModelScope.launch {
-            try {
-                if (nativeAvailable) {
-                    repo.downloadAsr(asr) { p -> download.value = DownloadState.Running("ASR ${asr.key}", frac(p)) }
-                    if (needLlm) repo.downloadLlm(llm) { p -> download.value = DownloadState.Running("LLM ${llm.key}", frac(p)) }
-                }
-                download.value = DownloadState.Done
-                startPipeline(station, asr, llm, needLlm)
-            } catch (t: Throwable) {
-                download.value = DownloadState.Error(t.message ?: "download failed")
-            }
-        }
+        download.value = DownloadState.Idle
+        currentStation.value?.let { ensureTranscription(it) }
     }
 
     private fun frac(p: ModelRepository.Progress): Float =
         if (p.totalBytes > 0) (p.downloadedBytes.toFloat() / p.totalBytes).coerceIn(0f, 1f) else 0f
 
-    @Suppress("unused")
-    private fun startPipeline(station: Station, asr: AsrModelSpec, llm: LlmModelSpec, needLlm: Boolean) {
-        stopPipeline()
-        currentStation.value = station
-        utterances.value = emptyList()
-        sessionTranscript.clear()
-        controller.setVolume(volume.value)
-        controller.play(station.url)
-
-        if (!nativeAvailable) return   // audio-only build (no on-device models)
+    /** Wire up ASR (+ LLM) against the already-playing stream. Models are present at this point. */
+    private fun startTranscription(asr: AsrModelSpec, llm: LlmModelSpec, needLlm: Boolean) {
+        if (!nativeAvailable) return
 
         // LLM
         if (needLlm && repo.isLlmReady(llm)) {
