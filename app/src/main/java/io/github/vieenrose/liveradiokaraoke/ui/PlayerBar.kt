@@ -2,6 +2,7 @@ package io.github.vieenrose.liveradiokaraoke.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.PlayArrow
@@ -32,7 +33,9 @@ fun PlayerBar(
     onStop: () -> Unit,
 ) {
     Row(
-        Modifier.fillMaxWidth().background(SurfaceGlass2).padding(horizontal = 12.dp, vertical = 8.dp),
+        Modifier.fillMaxWidth().background(SurfaceGlass2)
+            .navigationBarsPadding()   // sit above the system nav bar (edge-to-edge)
+            .padding(horizontal = 12.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(Modifier.weight(1f)) {
