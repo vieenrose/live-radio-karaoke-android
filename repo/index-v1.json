@@ -1,6 +1,6 @@
 {
   "repo": {
-    "timestamp": 1782281473000,
+    "timestamp": 1782286337000,
     "version": 20002,
     "name": "Live Radio Karaoke",
     "icon": "icon.png",
@@ -20,8 +20,8 @@
       "categories": [
         "Multimedia"
       ],
-      "suggestedVersionName": "1.0.5",
-      "suggestedVersionCode": "6",
+      "suggestedVersionName": "1.0.12",
+      "suggestedVersionCode": "13",
       "description": "Transcribes live radio streams in real time and highlights each word karaoke-style as it\nis spoken \u2014 entirely on-device. Streaming speech recognition (sherpa-onnx) for English,\nFrench and Mandarin, on-device summaries and live translation (Gemma 3 1B or a fully-open\nalternative), playback via Media3, bundled stations plus Radio Browser discovery, and\nSRT/TXT export.\n\nModels are downloaded once on first use and kept on the device. The Gemma model is under\nGoogle's non-free Gemma Terms of Use and downloads only after in-app consent; a fully-open\nmodel can be used instead.",
       "issueTracker": "https://github.com/vieenrose/live-radio-karaoke-android/issues",
       "license": "Apache-2.0",
@@ -29,17 +29,17 @@
       "sourceCode": "https://github.com/vieenrose/live-radio-karaoke-android",
       "summary": "On-device live radio transcription with karaoke highlighting",
       "webSite": "https://github.com/vieenrose/live-radio-karaoke-android",
-      "added": 1782281473000,
+      "added": 1782286337000,
       "packageName": "io.github.vieenrose.liveradiokaraoke",
-      "lastUpdated": 1782281473000
+      "lastUpdated": 1782286337000
     }
   ],
   "packages": {
     "io.github.vieenrose.liveradiokaraoke": [
       {
-        "added": 1782281473000,
-        "apkName": "LiveRadioKaraoke-1.0.5-arm64.apk",
-        "hash": "64efde885ff2fb78165a89db657207b5c8773cc62c8703da0922e4c63c838264",
+        "added": 1782286337000,
+        "apkName": "LiveRadioKaraoke-1.0.12-arm64.apk",
+        "hash": "eb32bf740289e08216a977c8405907c9ad9459b88052851ef2ebb03c84e8536a",
         "hashType": "sha256",
         "minSdkVersion": 26,
         "nativecode": [
@@ -48,7 +48,7 @@
         "packageName": "io.github.vieenrose.liveradiokaraoke",
         "sig": "8a406f707e923684b7ae73d3448dd31c",
         "signer": "3f69c694fbe0c430ce907550acd1c44f8a05ffea4886fc0ab4382b9949876332",
-        "size": 33042767,
+        "size": 33108783,
         "targetSdkVersion": 35,
         "uses-permission": [
           [
@@ -80,8 +80,8 @@
             null
           ]
         ],
-        "versionCode": 6,
-        "versionName": "1.0.5"
+        "versionCode": 13,
+        "versionName": "1.0.12"
       }
     ]
   }

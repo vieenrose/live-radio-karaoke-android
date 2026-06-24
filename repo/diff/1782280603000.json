@@ -1,28 +1,28 @@
 {
   "repo": {
-    "timestamp": 1782281473000
+    "timestamp": 1782286337000
   },
   "packages": {
     "io.github.vieenrose.liveradiokaraoke": {
       "metadata": {
-        "added": 1782281473000,
-        "lastUpdated": 1782281473000
+        "added": 1782286337000,
+        "lastUpdated": 1782286337000
       },
       "versions": {
         "f3ba7aa7c8441f8b989598bd29e4ee98f617d366abecee8b8489b7bd3198d2a0": null,
-        "64efde885ff2fb78165a89db657207b5c8773cc62c8703da0922e4c63c838264": {
-          "added": 1782281473000,
+        "eb32bf740289e08216a977c8405907c9ad9459b88052851ef2ebb03c84e8536a": {
+          "added": 1782286337000,
           "file": {
-            "name": "/LiveRadioKaraoke-1.0.5-arm64.apk",
-            "sha256": "64efde885ff2fb78165a89db657207b5c8773cc62c8703da0922e4c63c838264",
-            "size": 33042767
+            "name": "/LiveRadioKaraoke-1.0.12-arm64.apk",
+            "sha256": "eb32bf740289e08216a977c8405907c9ad9459b88052851ef2ebb03c84e8536a",
+            "size": 33108783
           },
           "manifest": {
             "nativecode": [
               "arm64-v8a"
             ],
-            "versionName": "1.0.5",
-            "versionCode": 6,
+            "versionName": "1.0.12",
+            "versionCode": 13,
             "usesSdk": {
               "minSdkVersion": 26,
               "targetSdkVersion": 35
