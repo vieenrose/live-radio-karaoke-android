@@ -61,11 +61,15 @@ object Config {
         )
     }
 
-    /** Language → ASR model key. */
+    /**
+     * Language → ASR model key. en/zh use the 480 ms-chunk X-ASR variant: its ~0.5 s look-ahead
+     * keeps the transcript close to the audio (the 1920 ms variant lagged ~2 s). Compute is still
+     * tiny (RTF well under 0.1); the variants differ in latency/accuracy, not in download size.
+     */
     val ASR_MODEL_FOR = mapOf(
-        "en" to "x-asr-zh-en-1920ms",
+        "en" to "x-asr-zh-en-480ms",
         "fr" to "fr-kroko",
-        "zh" to "x-asr-zh-en-1920ms",
+        "zh" to "x-asr-zh-en-480ms",
     )
 
     val LLM_MODELS: Map<String, LlmModelSpec> = listOf(

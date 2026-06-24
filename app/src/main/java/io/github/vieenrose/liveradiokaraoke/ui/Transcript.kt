@@ -53,8 +53,12 @@ fun TranscriptView(
     }
 
     val listState = rememberLazyListState()
-    LaunchedEffect(utterances.size) {
-        if (utterances.isNotEmpty()) listState.animateScrollToItem(utterances.size - 1)
+    // Bottom-anchored, chat-style: keep the newest utterance pinned to the bottom as it grows AND
+    // when a new one arrives. Keyed on the last utterance's id + token count (not list size, which
+    // plateaus at the 20-item cap) so it keeps following past 20 utterances.
+    val last = utterances.lastOrNull()
+    LaunchedEffect(last?.id, last?.tokens?.size, last?.translation) {
+        if (utterances.isNotEmpty()) runCatching { listState.animateScrollToItem(0) }
     }
 
     if (utterances.isEmpty()) {
@@ -67,8 +71,14 @@ fun TranscriptView(
         return
     }
 
-    LazyColumn(state = listState, modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        items(utterances, key = { it.id }) { u ->
+    // reverseLayout keeps content anchored to the bottom (newest first in the reversed list).
+    LazyColumn(
+        state = listState,
+        modifier = modifier,
+        reverseLayout = true,
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        items(utterances.asReversed(), key = { it.id }) { u ->
             UtteranceRow(u, if (u.id == highlight.utteranceId) highlight.tokenIndex else -1)
         }
     }
