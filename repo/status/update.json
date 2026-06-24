@@ -14,7 +14,7 @@
     "--pretty"
   ],
   "disabled": [],
-  "endTimestamp": 1782280609222,
+  "endTimestamp": 1782281477009,
   "failedBuilds": {},
   "jarsigner": "/usr/lib/jvm/java-21-openjdk-amd64/bin/jarsigner",
   "keytool": "/usr/lib/jvm/java-21-openjdk-amd64/bin/keytool",
@@ -26,14 +26,14 @@
     "io.github.vieenrose.liveradiokaraoke"
   ],
   "stages": {
-    "delete_disabled_builds": 1782280601870,
-    "index.make repo": 1782280603460,
-    "prepare_apps repo": 1782280603458,
-    "process_apks": 1782280601871,
-    "read_added_date_from_all_apks": 1782280603458,
-    "remove_apks": 1782280603456,
-    "scan_repo_files": 1782280603455
+    "delete_disabled_builds": 1782281472535,
+    "index.make repo": 1782281473330,
+    "prepare_apps repo": 1782281473329,
+    "process_apks": 1782281472536,
+    "read_added_date_from_all_apks": 1782281473328,
+    "remove_apks": 1782281473327,
+    "scan_repo_files": 1782281473327
   },
-  "startTimestamp": 1782251801000,
+  "startTimestamp": 1782252672000,
   "subcommand": "update"
 }
