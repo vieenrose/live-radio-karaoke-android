@@ -1,0 +1,66 @@
+{
+  "repo": {
+    "timestamp": 1782279983000
+  },
+  "packages": {
+    "io.github.vieenrose.liveradiokaraoke": {
+      "metadata": {
+        "added": 1782279983000,
+        "lastUpdated": 1782279983000
+      },
+      "versions": {
+        "6c4828f641473782965bcc4fadc7c661e757240ee9fa9368a368f95a1d4e1d0b": null,
+        "8721b417ec051393b933d0e32708a86cf5b5fa25f11499d66cdbb109eb7b5ec5": {
+          "added": 1782279983000,
+          "file": {
+            "name": "/LiveRadioKaraoke-1.0.3-arm64.apk",
+            "sha256": "8721b417ec051393b933d0e32708a86cf5b5fa25f11499d66cdbb109eb7b5ec5",
+            "size": 33042767
+          },
+          "manifest": {
+            "nativecode": [
+              "arm64-v8a"
+            ],
+            "versionName": "1.0.3",
+            "versionCode": 4,
+            "usesSdk": {
+              "minSdkVersion": 26,
+              "targetSdkVersion": 35
+            },
+            "signer": {
+              "sha256": [
+                "3f69c694fbe0c430ce907550acd1c44f8a05ffea4886fc0ab4382b9949876332"
+              ]
+            },
+            "usesPermission": [
+              {
+                "name": "android.permission.INTERNET"
+              },
+              {
+                "name": "android.permission.ACCESS_NETWORK_STATE"
+              },
+              {
+                "name": "android.permission.WAKE_LOCK"
+              },
+              {
+                "name": "android.permission.FOREGROUND_SERVICE"
+              },
+              {
+                "name": "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+              },
+              {
+                "name": "android.permission.POST_NOTIFICATIONS"
+              },
+              {
+                "name": "io.github.vieenrose.liveradiokaraoke.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+              }
+            ]
+          },
+          "antiFeatures": {
+            "NonFreeNet": {}
+          }
+        }
+      }
+    }
+  }
+}
