@@ -20,7 +20,7 @@
 No server. No account. No tracking. Live Radio Karaoke streams a radio station and, **fully on-device**,
 transcribes the speech word-by-word, highlights it karaoke-style in sync with the audio, and can
 summarise and translate it live. A native Kotlin/Jetpack-Compose port of the original
-[web app](https://huggingface.co/spaces/Luigi/Live-Radio-Karaoke), built for **F-Droid**.
+[web app](https://huggingface.co/spaces/Luigi/Live-Radio-Karaoke).
 
 <div align="center">
 <table>
@@ -49,14 +49,9 @@ summarise and translate it live. A native Kotlin/Jetpack-Compose port of the ori
 
 ## Install
 
-**1. Download the APK** (simplest) — grab the latest from
+**Download the APK** from
 **[Releases](https://github.com/vieenrose/live-radio-karaoke-android/releases/latest)**, allow "install
 unknown apps", and open it. arm64, Android 8.0+.
-
-**2. Add the F-Droid repo** (auto-updates) — in F-Droid / Droid-ify, add:
-```
-https://vieenrose.github.io/live-radio-karaoke-android/repo
-```
 
 > On first launch the speech + language models download once and stay on your device. The default
 > summary/translation model is **LFM2.5-1.2B** (Apache-2.0 — no consent needed). Google's **Gemma 3 1B**
@@ -89,7 +84,7 @@ LLM's Q4 matmul. The summarizer/translator uses the device's performance cores; 
 threads. Speech recognition is real-time with large headroom; the LLM runs comfortably for live
 summaries and translation.
 
-## Build from source (and the F-Droid story)
+## Build from source
 
 ```bash
 git clone https://github.com/vieenrose/live-radio-karaoke-android && cd live-radio-karaoke-android
@@ -98,17 +93,15 @@ git clone https://github.com/vieenrose/live-radio-karaoke-android && cd live-rad
 ./gradlew assembleDevDebug -PwithNative          # full on-device build
 ```
 
-The **entire native stack builds from source** — onnxruntime v1.24.3, sherpa-onnx v1.13.3, llama.cpp —
-and was made **offline- and blob-free-buildable** for F-Droid (onnxruntime's CMake FetchContent deps
-are mirrored locally; its prebuilt host protoc is replaced by one built from source). Verified end-to-end
-under network isolation. See **[`fdroid/`](fdroid/)** for the submission package and the build scripts in
-**[`scripts/`](scripts/)**.
+The **entire native stack builds from source** — onnxruntime v1.24.3, sherpa-onnx v1.13.3 and llama.cpp —
+and is even offline- and blob-free-buildable (onnxruntime's CMake FetchContent deps can be mirrored
+locally and its prebuilt host protoc replaced by one built from source). See **[`scripts/`](scripts/)**.
 
 ## Licensing
 
 App code is **Apache-2.0**; all dependencies are FOSS and source-buildable. Models are downloaded at
 runtime (never bundled), so the APK stays free. The default LLM (LFM2.5-1.2B) is Apache-2.0; the optional
-Gemma 3 1B is non-free and gated behind in-app consent. F-Droid AntiFeature: `NonFreeNet`.
+Gemma 3 1B is non-free and gated behind in-app consent.
 
 ## Credits
 
